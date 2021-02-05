@@ -4,10 +4,21 @@
         <title>Paint WebGL</title>
         <script src="util.js"></script>
         <script src="shaders.js"></script>
+        <script src="entity.js"></script>
+        <script src="entity_bank.js"></script>
     </head>
     <body style="margin: 0 !important; padding: 0 !important;">
-        <canvas id="gl-view" width="800" height="500">
-        </canvas>
+        <div>
+            <button onclick="switchMode(MODE.CURSOR);">Cursor</button>
+            <button onclick="switchMode(MODE.LINE);">Line</button>
+            <button>Square</button>
+            <button>Polygon</button>
+            <button onclick="clearBank()">Clear</button>
+        </div>
+        <div>
+            <canvas id="gl-view" width="800" height="500">
+            </canvas>    
+        </div>
         <script src="gl.js"></script>
     </body>
 </html>
