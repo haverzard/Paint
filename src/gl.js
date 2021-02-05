@@ -32,20 +32,28 @@ function processMousePress(canvas, event) {
             bank.addEntity(entity)
             total_vertices = total_vertices.concat(buf)
             buf = []
-            console.log(bank)
         }
+    } else if (mode == MODE.SQUARE) {
+        entity = new Entity(total_vertices.length/2, buf, gl.TRIANGLE_STRIP)
+        if (buf.length == 4) {
+            entity.vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
+            bank.addEntity(entity)
+            total_vertices = total_vertices.concat(entity.vertices)
+            buf = []
+        }
+    } else if (mode == MODE.POLYGON) {
+        entity = new Entity(total_vertices.length/2, buf, gl.TRIANGLE_STRIP)
     }
     total_vertices = total_vertices.concat(buf)
-    console.log(total_vertices)
 
-    draw(canvas, total_vertices, bank)
+    draw(canvas, total_vertices, bank.entities)
 }
 
-function draw(canvas, vertices, custom_bank) {
+function draw(canvas, vertices, entities) {
     // add to buffer
     var vertex_buffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
     gl.bindBuffer(gl.ARRAY_BUFFER, null)
 
     // var color_buffer = gl.createBuffer()
@@ -69,7 +77,6 @@ function draw(canvas, vertices, custom_bank) {
     // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer)
 
     // Clear the canvas
-    gl.clearColor(0.5, 0.5, 0.5, 0.9)
 
     // Enable the depth test
     gl.enable(gl.DEPTH_TEST)
@@ -81,7 +88,7 @@ function draw(canvas, vertices, custom_bank) {
     gl.viewport(0, 0, canvas.width, canvas.height)
 
     // Draw the triangle
-    custom_bank.entities.forEach((entity) => {
+    entities.forEach((entity) => {
         gl.drawArrays(entity.gl_mode, entity.offset, entity.vertices.length/2)
     })
 }

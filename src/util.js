@@ -3,6 +3,7 @@ var mode = MODE.NONE
 
 function switchMode(new_mode) {
     mode = new_mode
+    buf = []
 }
 
 function getGL(canvas) {
