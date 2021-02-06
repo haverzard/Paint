@@ -1,14 +1,16 @@
 class ShadowView {
     constructor(observer) {
-        this.observer = observer
+        // init canvas
         this.canvas = document.getElementById("shadow-view")
         this.canvas.width = window.innerHeight * 0.95
         this.canvas.height = window.innerHeight * 0.95
         this.canvas.addEventListener('mousedown', (e) => this.processMousePress(e))
         this.canvas.addEventListener('mousemove', (e) => this.processMouseMove(e))
 
+        // attributes
         this.buf = []
         this.gl = getGL(this.canvas)
+        this.observer = observer
     
         // init GL
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
@@ -20,6 +22,7 @@ class ShadowView {
     }
 
     processMousePress(event) {
+        // simplify variables
         var canvas = this.canvas
         var gl = this.gl
         var buf = this.buf
@@ -29,31 +32,36 @@ class ShadowView {
         const y = event.clientY - rect.top
         console.log("x: " + x + " y: " + y)
         if (mode == MODE.CURSOR) return
-    
+
+        // insert vertex to local buffer
         buf.push(x/canvas.width*2-1)
         buf.push(((-y/canvas.height*2)+1))
     
         var gl_mode
+        var color = this.observer.getColor()
         if (mode == MODE.LINE) {
             gl_mode = gl.LINES
+            // finish line
             if (buf.length == 4) {
-                this.observer.putDrawing(buf, gl.LINES)
+                this.observer.putDrawing(buf, gl.LINES, color)
                 this.buf = []
             }
         } else if (mode == MODE.SQUARE) {
             gl_mode = gl.TRIANGLE_STRIP
+            // finish square
             if (buf.length == 4) {
-                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]], gl.TRIANGLE_STRIP)
+                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]], gl.TRIANGLE_STRIP, color)
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
             gl_mode = gl.TRIANGLE_STRIP
         }
         console.log(this.buf)
-        this.draw(gl_mode, this.buf)
+        if (this.buf) this.draw(gl_mode, this.buf, color)
     }
 
     processMouseMove(event) {
+        // simplify variables
         var canvas = this.canvas
         var gl = this.gl
         var buf = this.buf
@@ -62,32 +70,54 @@ class ShadowView {
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
         if (mode == MODE.CURSOR) return
+        // ignore empty buf to reduce computation
         if (buf == []) return
     
         var gl_mode
         var total_vertices = this.buf
+
         if (mode == MODE.LINE) {
+            // create line
             gl_mode = gl.LINES
             total_vertices = total_vertices.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
         } else if (mode == MODE.SQUARE) {
+            // create square
             gl_mode = gl.TRIANGLE_STRIP
             buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
             total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
         } else if (mode == MODE.POLYGON) {
             gl_mode = gl.TRIANGLE_STRIP
         }
-    
-        this.draw(gl_mode, total_vertices)
+
+        // draw to canvas
+        this.draw(gl_mode, total_vertices, this.observer.getColor())
     }
 
-    draw(gl_mode, vertices) {
+    draw(gl_mode, vertices, color) {
+        // simplify variables
         var gl = this.gl
         var shaderProgram = this.shaderProgram
 
+        // duplicate color (1 color for each entity) - we want to avoid gradient (increase of complexity)
+        var colors = []
+        for (var i = 0; i < vertices.length/2; i++) colors = colors.concat(color)
+
+        // create buffer for vertex & color - for shaders
         var vertex_buffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+        
+        var color_buffer = gl.createBuffer()
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
 
+        // send buffer to attribute in shaders
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
+        var colorRGBA = gl.getAttribLocation(shaderProgram, "color")
+        gl.vertexAttribPointer(colorRGBA, 4, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(colorRGBA)
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
         var coord = gl.getAttribLocation(shaderProgram, "vPosition")
         gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0)
         gl.enableVertexAttribArray(coord)
@@ -95,12 +125,14 @@ class ShadowView {
         // Enable the depth test
         this.gl.enable(gl.DEPTH_TEST)
     
-        // Draw the triangle
+        // Draw the entity
         gl.drawArrays(gl_mode, 0, vertices.length/2)
     }
 
     clear() {
+        // delete buffer
         this.buf = []
+        // delete entities in canvas
         this.gl.clear(this.gl.COLOR_BUFFER_BIT)
     }
 }
