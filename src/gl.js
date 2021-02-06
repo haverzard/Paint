@@ -81,5 +81,8 @@ function isSamePointWithTolerance(p1, p2, tolerance) {
 }
 
 window.onload = () => {
-  observer = new Observer()
+    var canvasBg = document.getElementById("canvas-background")
+    canvasBg.style.minWidth = window.innerHeight * 0.95 + "px"
+    canvasBg.style.minHeight = window.innerHeight * 0.95 + "px"
+    observer = new Observer()
 }

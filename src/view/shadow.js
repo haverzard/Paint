@@ -129,11 +129,11 @@ class ShadowView {
         // create buffer for vertex & color - for shaders
         var vertex_buffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW)
         
         var color_buffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW)
 
         // send buffer to attribute in shaders
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
