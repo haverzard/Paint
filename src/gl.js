@@ -1,9 +1,4 @@
-var buf = []
-var bank = new EntityBank()
-var gl
-var shaderProgram
-
-function clearBank() {
+function clearBank(gl, bank) {
   delete bank.entities
   bank.entities = []
   gl.clearColor(0.5, 0.5, 0.5, 0.9)
@@ -55,21 +50,21 @@ function processMousePress(canvas, event) {
   } else if (mode == MODE.POLYGON) {
     entity = new Entity(total_vertices.length / 2, buf, gl.TRIANGLE_STRIP)
     length = buf.length
-    tolerance = 0.02
+    // tolerance = 0.02
+    tolerance = 0.01
     if (length > 4) {
       console.log(isSamePointWithTolerance(buf[0], buf[length - 2], tolerance))
       console.log(isSamePointWithTolerance(buf[1], buf[length - 1], tolerance))
     }
     if (
       length > 4 &&
-      (isSamePointWithTolerance(buf[0], buf[length - 2], tolerance) ||
-        isSamePointWithTolerance(buf[1], buf[length - 1], tolerance))
+      isSamePointWithTolerance(buf[0], buf[length - 2], tolerance) &&
+      isSamePointWithTolerance(buf[1], buf[length - 1], tolerance)
     ) {
       entity.vertices = []
       for (let i = 0; i < length; i++) {
         entity.vertices.push(buf[i])
       }
-      console.log('a')
       entity.vertices[length - 2] = buf[0]
       entity.vertices[length - 1] = buf[1]
       bank.addEntity(entity)
@@ -86,65 +81,6 @@ function isSamePointWithTolerance(p1, p2, tolerance) {
   return p2 > p1 - tolerance && p2 < p1 + tolerance
 }
 
-function draw(canvas, vertices, entities) {
-  // add to buffer
-  var vertex_buffer = gl.createBuffer()
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
-  gl.bindBuffer(gl.ARRAY_BUFFER, null)
-
-  // var color_buffer = gl.createBuffer()
-  // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-  // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW)
-  // gl.bindBuffer(gl.ARRAY_BUFFER, null)
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-  var coord = gl.getAttribLocation(shaderProgram, 'vPosition')
-  gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0)
-  gl.enableVertexAttribArray(coord)
-  gl.bindBuffer(gl.ARRAY_BUFFER, null)
-
-  // gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-  // var colorRGBA = gl.getAttribLocation(shaderProgram, "color")
-  // gl.vertexAttribPointer(colorRGBA, 4, gl.FLOAT, false, 0, 0)
-  // gl.enableVertexAttribArray(colorRGBA)
-
-  /* Step5: Drawing the required object (triangle) */
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-  // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer)
-
-  // Clear the canvas
-
-  // Enable the depth test
-  gl.enable(gl.DEPTH_TEST)
-
-  // Clear the color buffer bit
-  gl.clear(gl.COLOR_BUFFER_BIT)
-
-  // Set the view port
-  gl.viewport(0, 0, canvas.width, canvas.height)
-
-  // Draw the triangle
-  entities.forEach((entity) => {
-    gl.drawArrays(entity.gl_mode, entity.offset, entity.vertices.length / 2)
-  })
-}
-
 window.onload = () => {
-  // init canvas
-  var canvas = document.getElementById('gl-view')
-  canvas.width = window.innerHeight * 0.95
-  canvas.height = window.innerHeight * 0.95
-  canvas.addEventListener('mousedown', (e) => processMousePress(canvas, e))
-
-  // get GL context
-  gl = getGL(canvas)
-
-  // init GL
-  gl.viewport(0, 0, canvas.width, canvas.height)
-  gl.clearColor(0.5, 0.5, 0.5, 0.9)
-  gl.clear(gl.COLOR_BUFFER_BIT)
-
-  // load shader
-  shaderProgram = loadShader(gl)
+  observer = new Observer()
 }
