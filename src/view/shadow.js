@@ -54,7 +54,19 @@ class ShadowView {
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
-            gl_mode = gl.TRIANGLE_STRIP
+            gl_mode = gl.LINES
+            if (buf.length > 4) {
+                gl_mode = gl.TRIANGLE_FAN
+                const tolerance = 0.01
+                length = buf.length
+                if (
+                    isSamePointWithTolerance(buf[0], buf[length - 2], tolerance) &&
+                    isSamePointWithTolerance(buf[1], buf[length - 1], tolerance)
+                ) {
+                    this.observer.putDrawing(buf, gl.TRIANGLE_FAN, color)
+                    this.buf = []
+                }
+            }
         }
         console.log(this.buf)
         if (this.buf) this.draw(gl_mode, this.buf, color)
@@ -86,7 +98,19 @@ class ShadowView {
             buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
             total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
         } else if (mode == MODE.POLYGON) {
-            gl_mode = gl.TRIANGLE_STRIP
+            if (buf.length < 4) {
+                gl_mode = gl.LINES
+                total_vertices = total_vertices.concat([
+                    (x / canvas.width) * 2 - 1,
+                    (-y / canvas.height) * 2 + 1,
+                ])
+            } else {
+                gl_mode = gl.TRIANGLE_FAN
+                total_vertices = total_vertices.concat([
+                    (x / canvas.width) * 2 - 1,
+                    (-y / canvas.height) * 2 + 1,
+                ])
+            }
         }
 
         // draw to canvas
