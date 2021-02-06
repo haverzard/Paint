@@ -58,4 +58,9 @@ class MainView {
             gl.drawArrays(entity.gl_mode, entity.offset, entity.vertices.length/2)
         })
     }
+
+    clear() {
+        this.bank.entities = []
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+    }
 }

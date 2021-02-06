@@ -1,8 +1,7 @@
-function clearBank(gl, bank) {
-  delete bank.entities
-  bank.entities = []
-  gl.clearColor(0.5, 0.5, 0.5, 0.9)
-  gl.clear(gl.COLOR_BUFFER_BIT)
+var observer
+
+function clearBank() {
+    observer.clearCanvas()
 }
 
 function processMousePress(canvas, event) {

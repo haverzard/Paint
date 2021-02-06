@@ -1,5 +1,5 @@
 const MODE = Object.freeze({"CURSOR": 0, "LINE": 1, "SQUARE": 2, "POLYGON": 3})
-var mode = MODE.NONE
+var mode = MODE.CURSOR
 
 function switchMode(new_mode) {
     mode = new_mode
