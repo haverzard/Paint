@@ -44,7 +44,7 @@ class ShadowView {
         } else if (mode == MODE.SQUARE) {
             gl_mode = gl.TRIANGLE_STRIP
             if (buf.length == 4) {
-                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]], gl.LINES)
+                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]], gl.TRIANGLE_STRIP)
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
@@ -74,6 +74,8 @@ class ShadowView {
                 total_vertices = total_vertices.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
             } else if (mode == MODE.SQUARE) {
                 gl_mode = gl.TRIANGLE_STRIP
+                buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
+                total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
             } else if (mode == MODE.POLYGON) {
                 gl_mode = gl.TRIANGLE_STRIP
             }
