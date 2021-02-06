@@ -104,4 +104,9 @@ class ShadowView {
         // Draw the triangle
         gl.drawArrays(gl_mode, 0, vertices.length/2)
     }
+
+    clear() {
+        this.buf = []
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+    }
 }
