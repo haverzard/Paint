@@ -78,12 +78,15 @@ class ShadowView {
         var gl = this.gl
         var buf = this.buf
 
+        // ignore empty buf to reduce computation
+        if (buf == []) return
+
         const rect = canvas.getBoundingClientRect()
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
-        if (mode == MODE.CURSOR) return
-        // ignore empty buf to reduce computation
-        if (buf == []) return
+
+        var coord = [x/canvas.width*2-1, ((-y/canvas.height*2)+1)]
+        if (mode == MODE.CURSOR) return this.observer.findV(coord)
     
         var gl_mode
         var total_vertices = this.buf
@@ -91,19 +94,16 @@ class ShadowView {
         if (mode == MODE.LINE) {
             // create line
             gl_mode = gl.LINES
-            total_vertices = total_vertices.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
+            total_vertices = total_vertices.concat(coord)
         } else if (mode == MODE.SQUARE) {
             // create square
             gl_mode = gl.TRIANGLE_STRIP
-            buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
+            buf = buf.concat(coord)
             total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
         } else if (mode == MODE.POLYGON) {
             if (buf.length < 4) {
                 gl_mode = gl.LINES
-                total_vertices = total_vertices.concat([
-                    (x / canvas.width) * 2 - 1,
-                    (-y / canvas.height) * 2 + 1,
-                ])
+                total_vertices = total_vertices.concat(coord)
             } else {
                 gl_mode = gl.TRIANGLE_FAN
                 total_vertices = total_vertices.concat([

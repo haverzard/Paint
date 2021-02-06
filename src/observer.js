@@ -25,4 +25,17 @@ class Observer {
         // var opacity = document.getElementById("opacity-slider").value
         return [Math.floor(color / 65536)/255, Math.floor((color % 65536) / 256)/255, (color % 256)/255, 1.0]
     }
+
+    findV(coord) {
+        var entities = this.main.bank.entities.reverse()
+        for (var i = 0; i < entities.length; i++) {
+            if (entities[i].gl_mode == this.main.gl.LINES) {
+                // line
+            } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
+                // square
+            } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_FAN) {
+                // polygon
+            }
+        }
+    }
 }
