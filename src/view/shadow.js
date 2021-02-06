@@ -50,7 +50,15 @@ class ShadowView {
             gl_mode = gl.TRIANGLE_STRIP
             // finish square
             if (buf.length == 4) {
-                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]], gl.TRIANGLE_STRIP, color)
+                var neg = [(buf[2] - buf[0]) < 0, (buf[3] - buf[1]) < 0]
+                var d = [Math.abs(buf[2] - buf[0]), , Math.abs(buf[3] - buf[1])]
+    
+                var n = 0
+                if (d[0] < d[1]) {
+                    n = 1
+                }
+                buf = buf.concat([buf[0]+d[n]*(neg[0] ? -1 : 1), buf[1]+d[n]*(neg[1] ? -1 : 1)])
+                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[5], buf[4], buf[1], buf[4], buf[5]], gl.TRIANGLE_STRIP, color)
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
@@ -98,7 +106,14 @@ class ShadowView {
         } else if (mode == MODE.SQUARE) {
             // create square
             gl_mode = gl.TRIANGLE_STRIP
-            buf = buf.concat(coord)
+            var neg = [(coord[0] - buf[0]) < 0, (coord[1] - buf[1]) < 0]
+            var d = [Math.abs(coord[0] - buf[0]), , Math.abs(coord[1] - buf[1])]
+
+            var n = 0
+            if (d[0] < d[1]) {
+                n = 1
+            }
+            buf = buf.concat([buf[0]+d[n]*(neg[0] ? -1 : 1), buf[1]+d[n]*(neg[1] ? -1 : 1)])
             total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
         } else if (mode == MODE.POLYGON) {
             if (buf.length < 4) {
