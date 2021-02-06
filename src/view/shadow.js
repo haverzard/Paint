@@ -8,7 +8,6 @@ class ShadowView {
         this.canvas.addEventListener('mousemove', (e) => this.processMouseMove(e))
 
         this.buf = []
-        this.lock = false
         this.gl = getGL(this.canvas)
     
         // init GL
@@ -55,34 +54,30 @@ class ShadowView {
     }
 
     processMouseMove(event) {
-        if (!this.lock) {
-            this.lock = true
-            var canvas = this.canvas
-            var gl = this.gl
-            var buf = this.buf
+        var canvas = this.canvas
+        var gl = this.gl
+        var buf = this.buf
 
-            const rect = canvas.getBoundingClientRect()
-            const x = event.clientX - rect.left
-            const y = event.clientY - rect.top
-            if (mode == MODE.CURSOR) return
-            if (buf == []) return
-        
-            var gl_mode
-            var total_vertices = this.buf
-            if (mode == MODE.LINE) {
-                gl_mode = gl.LINES
-                total_vertices = total_vertices.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
-            } else if (mode == MODE.SQUARE) {
-                gl_mode = gl.TRIANGLE_STRIP
-                buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
-                total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
-            } else if (mode == MODE.POLYGON) {
-                gl_mode = gl.TRIANGLE_STRIP
-            }
-        
-            this.draw(gl_mode, total_vertices)
-            this.lock = false
+        const rect = canvas.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+        if (mode == MODE.CURSOR) return
+        if (buf == []) return
+    
+        var gl_mode
+        var total_vertices = this.buf
+        if (mode == MODE.LINE) {
+            gl_mode = gl.LINES
+            total_vertices = total_vertices.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
+        } else if (mode == MODE.SQUARE) {
+            gl_mode = gl.TRIANGLE_STRIP
+            buf = buf.concat([x/canvas.width*2-1, ((-y/canvas.height*2)+1)])
+            total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
+        } else if (mode == MODE.POLYGON) {
+            gl_mode = gl.TRIANGLE_STRIP
         }
+    
+        this.draw(gl_mode, total_vertices)
     }
 
     draw(gl_mode, vertices) {
@@ -99,7 +94,6 @@ class ShadowView {
     
         // Enable the depth test
         this.gl.enable(gl.DEPTH_TEST)
-        this.gl.clear(gl.COLOR_BUFFER_BIT)
     
         // Draw the triangle
         gl.drawArrays(gl_mode, 0, vertices.length/2)
