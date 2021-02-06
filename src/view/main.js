@@ -21,7 +21,7 @@ class MainView {
     getVertices() {
         // merge all entities into single array
         var total_vertices = []
-        this.bank.entities.reverse().forEach((entity) => {
+        this.bank.entities.forEach((entity) => {
             total_vertices = total_vertices.concat(entity.vertices)
         })
         return total_vertices
@@ -32,9 +32,9 @@ class MainView {
         var total_vertices = []
         var colors = []
         this.bank.entities.forEach((entity) => {
-            total_vertices = total_vertices.concat(entity.vertices)
+            total_vertices = entity.vertices.concat(total_vertices)
             for (var i = 0; i < entity.vertices.length/2; i++)
-                colors = colors.concat(entity.color)
+                colors = entity.color.concat(colors)
         })
         console.log(colors)
         return [total_vertices, colors]
@@ -70,7 +70,8 @@ class MainView {
         /* Step5: Drawing the required object (triangle) */
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
     
-        gl.disable(gl.DEPTH_TEST)
+        // Enable the depth test
+        gl.enable(gl.DEPTH_TEST)
     
         // Clear the color buffer bit
         gl.clear(gl.COLOR_BUFFER_BIT)
