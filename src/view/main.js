@@ -33,10 +33,10 @@ class MainView {
         var colors = []
         this.bank.entities.forEach((entity) => {
             total_vertices = entity.vertices.concat(total_vertices)
-            for (var i = 0; i < entity.vertices.length/2; i++)
+            for (var i = 0; i < entity.vertices.length/2; i++) {
                 colors = entity.color.concat(colors)
+            }
         })
-        console.log(colors)
         return [total_vertices, colors]
     }
 
@@ -66,7 +66,7 @@ class MainView {
         var coord = gl.getAttribLocation(shaderProgram, "vPosition")
         gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0)
         gl.enableVertexAttribArray(coord)    
-    
+
         /* Step5: Drawing the required object (triangle) */
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
     
@@ -74,7 +74,6 @@ class MainView {
         gl.enable(gl.DEPTH_TEST)
     
         // Clear the color buffer bit
-        gl.clear(gl.COLOR_BUFFER_BIT)
     
         // Draw the triangle
         console.log(this.bank.entities)
