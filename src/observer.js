@@ -11,10 +11,13 @@ class Observer {
         this.main.draw()
     }
 
-    clearCanvas() {
-        // clear shadow view
+    clearShadow() {
         this.shadow.buf = []
         this.shadow.clear()
+    }
+
+    clearCanvas() {
+        this.clearShadow()
         // clear main view
         this.main.bank.entities = []
         this.main.clear()

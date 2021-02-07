@@ -14,3 +14,10 @@ window.onload = () => {
     canvasBg.style.minHeight = window.innerHeight * 0.95 + "px"
     observer = new Observer()
 }
+
+window.onkeydown = (e) => {
+    var code = e.keyCode
+    if (code == 27) {
+        observer.clearShadow()
+    }
+}
