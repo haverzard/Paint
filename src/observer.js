@@ -41,4 +41,9 @@ class Observer {
             }
         }
     }
+
+    loadModel(file) {
+        var draw = () => this.main.draw()
+        this.main.bank.loadFromFile(file, draw)
+    }
 }

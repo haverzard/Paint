@@ -13,6 +13,7 @@
         <script src="view/shadow.js"></script>
         <script src="entity.js"></script>
         <script src="entity_bank.js"></script>
+        <script src=""></script>
     </head>
     <body>
         <div>
@@ -22,6 +23,8 @@
             <button onclick="switchMode(MODE.POLYGON);">Polygon</button>
             <button onclick="clearBank()">Clear</button>
             <input type="color" id="color-picker" value="#0000ff">
+            <button onclick="saveModel()">Save</button>
+            <input type="file" id="file-uploader">
             <!-- <input type="range" id="opacity-slider" min="1" max="100" value="80"> -->
         </div>
         <div>
