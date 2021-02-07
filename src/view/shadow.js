@@ -34,8 +34,16 @@ class ShadowView {
 
     var coord = [(x / canvas.width) * 2 - 1, (-y / canvas.height) * 2 + 1]
     if (mode == MODE.CURSOR) {
-      console.log(this.observer.isVInsideAny(coord))
-      return this.observer.findV(coord)
+      //   const isInEntity = this.observer.findV(coord)
+      //   if (isInEntity !== -1) {
+      //     const hoverColor = this.observer.getColor()
+      //     console.log(hoverColor)
+      //     hoverColor[3] = 0.8 //opacity
+      //     this.observer.changeColor(isInEntity, hoverColor)
+      //   } else {
+      //     hoverColor[3] = 1
+      //   }
+      return
     }
 
     // insert vertex to local buffer
@@ -104,8 +112,15 @@ class ShadowView {
 
     var coord = [(x / canvas.width) * 2 - 1, (-y / canvas.height) * 2 + 1]
     if (mode == MODE.CURSOR) {
-      //   console.log(this.observer.isVInsideAny(coord))
-      return this.observer.findV(coord)
+      const isInEntity = this.observer.findV(coord)
+      const targetColor = this.observer.getColor()
+      if (isInEntity !== -1) {
+        targetColor[3] = 0.6 //onHover change opacity
+        this.observer.changeColor(isInEntity, targetColor)
+      } else {
+        this.observer.removeHover()
+      }
+      return
     }
 
     var gl_mode

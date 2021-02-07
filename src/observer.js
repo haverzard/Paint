@@ -36,17 +36,17 @@ class Observer {
     ]
   }
 
-  findV(coord) {
-    var entities = this.main.bank.entities.reverse()
-    for (var i = 0; i < entities.length; i++) {
-      if (entities[i].gl_mode == this.main.gl.LINES) {
-        // line
-      } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
-        // square
-      } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_FAN) {
-      }
-    }
-  }
+  //   findV(coord) {
+  //     var entities = this.main.bank.entities.reverse()
+  //     for (var i = 0; i < entities.length; i++) {
+  //       if (entities[i].gl_mode == this.main.gl.LINES) {
+  //         // line
+  //       } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
+  //         // square
+  //       } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_FAN) {
+  //       }
+  //     }
+  //   }
 
   onSegment(p, q, r) {
     if (
@@ -69,7 +69,6 @@ class Observer {
     const val =
       parseFloat((q[1] - p[1]) * (r[0] - q[0])) -
       parseFloat((q[0] - p[0]) * (r[1] - q[1]))
-    console.log(val)
     if (val > 0) {
       return 1
     }
@@ -128,18 +127,35 @@ class Observer {
         break
       }
     }
-    console.log(count)
     return count % 2 == 1
   }
 
-  isVInsideAny(p) {
+  findV(p) {
     var entities = this.main.bank.entities
     if (entities.length === 0) return
     for (var i = 0; i < entities.length; i++) {
       if (this.isVInside(entities[i].vertices, p)) {
-        return true
+        return i
       }
     }
-    return false
+    return -1
+  }
+
+  changeColor(entityIdx, color) {
+    console.log(this.main.bank.entities[entityIdx])
+    this.main.bank.entities[entityIdx] = {
+      ...this.main.bank.entities[entityIdx],
+      color: [...color],
+    }
+    this.main.draw()
+  }
+
+  removeHover() {
+    this.main.bank.entities.forEach((entity) => {
+      if (entity.color[3] !== 1) {
+        entity.color[3] = 1
+      }
+    })
+    this.main.draw()
   }
 }

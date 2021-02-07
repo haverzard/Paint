@@ -5,8 +5,4 @@ class Entity {
     this.color = color
     this.gl_mode = gl_mode
   }
-
-  changeColor(color) {
-    this.color = [0, 0, 0, 1.0]
-  }
 }
