@@ -25,6 +25,7 @@ class ShadowView {
     }
 
     processMouseRelease(event) {
+        if (this.binding == []) return
         if (mode != MODE.CURSOR) return
         this.hold = false
         this.clear()
