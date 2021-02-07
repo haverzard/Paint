@@ -3,7 +3,7 @@ var mode = MODE.CURSOR
 
 function switchMode(new_mode) {
     mode = new_mode
-    buf = []
+    observer.clearShadow()
 }
 
 function getGL(canvas) {

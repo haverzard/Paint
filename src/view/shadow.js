@@ -5,10 +5,13 @@ class ShadowView {
         this.canvas.width = window.innerHeight * 0.95
         this.canvas.height = window.innerHeight * 0.95
         this.canvas.addEventListener('mousedown', (e) => this.processMousePress(e))
+        this.canvas.addEventListener('mouseup', (e) => this.processMouseRelease(e))
         this.canvas.addEventListener('mousemove', (e) => this.processMouseMove(e))
 
         // attributes
         this.buf = []
+        this.binding = []
+        this.hold = false
         this.gl = getGL(this.canvas)
         this.observer = observer
     
@@ -21,6 +24,25 @@ class ShadowView {
         this.shaderProgram = loadShader(this.gl, norm2dVertex, shadowFrag)    
     }
 
+    processMouseRelease(event) {
+        if (mode != MODE.CURSOR) return
+        this.hold = false
+        this.clear()
+        var canvas = this.canvas
+        var binding = this.binding
+
+        const rect = canvas.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+
+        var s = binding[1]*2
+        binding[0].vertices[s] = (x/canvas.width*2-1)
+        binding[0].vertices[s+1] = (((-y/canvas.height*2)+1))
+
+        this.unbindCursor()
+        this.observer.main.draw()
+    }
+
     processMousePress(event) {
         // simplify variables
         var canvas = this.canvas
@@ -31,7 +53,10 @@ class ShadowView {
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
         console.log("x: " + x + " y: " + y)
-        if (mode == MODE.CURSOR) return
+        if (mode == MODE.CURSOR) {
+            this.hold = true
+            return
+        }
 
         // insert vertex to local buffer
         buf.push(x/canvas.width*2-1)
@@ -96,8 +121,8 @@ class ShadowView {
         const y = event.clientY - rect.top
 
         var coord = [x/canvas.width*2-1, ((-y/canvas.height*2)+1)]
-        if (mode == MODE.CURSOR) return this.observer.findV(coord)
-    
+        if (mode == MODE.CURSOR) return this.processCursor(coord)
+
         var gl_mode
         var total_vertices = this.buf
 
@@ -170,6 +195,26 @@ class ShadowView {
     
         // Draw the entity
         gl.drawArrays(gl_mode, 0, vertices.length/2)
+    }
+
+    processCursor(coord) {
+        if (!this.hold) return this.observer.findV(coord)
+        var v_num = this.binding[1]
+        var entity = this.binding[0] 
+
+        if (entity.gl_mode == this.gl.LINES) {
+            var s = (v_num*2+2) % 4
+            var total_vertices = coord.concat(entity.vertices.slice(s, s+2))
+        }
+        this.draw(entity.gl_mode, total_vertices, entity.color)
+    }
+
+    bindCursor(entity, v_num) {
+        this.binding = [entity, v_num]
+    }
+
+    unbindCursor() {
+        this.binding = []
     }
 
     clear() {

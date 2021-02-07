@@ -30,10 +30,19 @@ class Observer {
     }
 
     findV(coord) {
+        this.clearShadow()
+        this.shadow.unbindCursor()
         var entities = this.main.bank.entities.reverse()
         for (var i = 0; i < entities.length; i++) {
             if (entities[i].gl_mode == this.main.gl.LINES) {
                 // line
+                for (var v = 0; v < 2; v++) {
+                    if (isClose(coord, entities[i].vertices.slice(v*2, v*2 + 2))) {
+                        this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
+                        this.shadow.bindCursor(entities[i], v)
+                        return
+                    }
+                }
             } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
                 // square
             } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_FAN) {
