@@ -31,13 +31,15 @@ class MainView {
         // merge all entities into single array
         var total_vertices = []
         var colors = []
-        this.bank.entities.forEach((entity) => {
-            total_vertices = entity.vertices.concat(total_vertices)
+        var depth = []
+        this.bank.entities.forEach((entity, x) => {
+            total_vertices = total_vertices.concat(entity.vertices)
             for (var i = 0; i < entity.vertices.length/2; i++) {
-                colors = entity.color.concat(colors)
+                colors = colors.concat(entity.color)
+                depth.push(-x/this.bank.entities.length)
             }
         })
-        return [total_vertices, colors]
+        return [total_vertices, colors, depth]
     }
 
     draw() {
@@ -56,11 +58,20 @@ class MainView {
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_info[1]), gl.STATIC_DRAW)
 
+        var depth_buffer = gl.createBuffer()
+        gl.bindBuffer(gl.ARRAY_BUFFER, depth_buffer)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_info[2]), gl.STATIC_DRAW)
+
         // send buffer to attribute in shaders
         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
         var colorRGBA = gl.getAttribLocation(shaderProgram, "color")
         gl.vertexAttribPointer(colorRGBA, 4, gl.FLOAT, false, 0, 0)
         gl.enableVertexAttribArray(colorRGBA)
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, depth_buffer)
+        var depth = gl.getAttribLocation(shaderProgram, "depth")
+        gl.vertexAttribPointer(depth, 1, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(depth)
 
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
         var coord = gl.getAttribLocation(shaderProgram, "vPosition")
@@ -73,10 +84,7 @@ class MainView {
         // Enable the depth test
         gl.enable(gl.DEPTH_TEST)
     
-        // Clear the color buffer bit
-    
         // Draw the triangle
-        console.log(this.bank.entities)
         this.bank.entities.forEach((entity) => {
             gl.drawArrays(entity.gl_mode, entity.offset, entity.vertices.length/2)
         })

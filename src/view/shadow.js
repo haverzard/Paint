@@ -50,15 +50,17 @@ class ShadowView {
             gl_mode = gl.TRIANGLE_STRIP
             // finish square
             if (buf.length == 4) {
+                // direction
                 var neg = [(buf[2] - buf[0]) < 0, (buf[3] - buf[1]) < 0]
-                var d = [Math.abs(buf[2] - buf[0]), , Math.abs(buf[3] - buf[1])]
-    
-                var n = 0
-                if (d[0] < d[1]) {
-                    n = 1
-                }
-                buf = buf.concat([buf[0]+d[n]*(neg[0] ? -1 : 1), buf[1]+d[n]*(neg[1] ? -1 : 1)])
-                this.observer.putDrawing([buf[0], buf[1], buf[0], buf[5], buf[4], buf[1], buf[4], buf[5]], gl.TRIANGLE_STRIP, color)
+                // calculate max distance
+                // make sure it's within the canvas
+                var d = Math.max(
+                    Math.min(Math.abs(1 - buf[1] - 2 * neg[1]), Math.abs(buf[2] - buf[0])),
+                    Math.min(Math.abs(1 - buf[0] - 2 * neg[0]), Math.abs(buf[3] - buf[1]))
+                )
+                // calculate vertex
+                var temp_buf = [buf[0] + d * (1 - neg[0] * 2), buf[1] + d * (1 - neg[1] * 2)]
+                this.observer.putDrawing([buf[0], buf[1], buf[0], temp_buf[1], temp_buf[0], buf[1], temp_buf[0], temp_buf[1]], gl.TRIANGLE_STRIP, color)
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
@@ -106,15 +108,17 @@ class ShadowView {
         } else if (mode == MODE.SQUARE) {
             // create square
             gl_mode = gl.TRIANGLE_STRIP
+            // direction
             var neg = [(coord[0] - buf[0]) < 0, (coord[1] - buf[1]) < 0]
-            var d = [Math.abs(coord[0] - buf[0]), , Math.abs(coord[1] - buf[1])]
-
-            var n = 0
-            if (d[0] < d[1]) {
-                n = 1
-            }
-            buf = buf.concat([buf[0]+d[n]*(neg[0] ? -1 : 1), buf[1]+d[n]*(neg[1] ? -1 : 1)])
-            total_vertices = [buf[0], buf[1], buf[0], buf[3], buf[2], buf[1], buf[2], buf[3]]
+            // calculate max distance
+            // make sure it's within the canvas
+            var d = Math.max(
+                Math.min(Math.abs(1 - buf[1] - 2 * neg[1]), Math.abs(coord[0] - buf[0])),
+                Math.min(Math.abs(1 - buf[0] - 2 * neg[0]), Math.abs(coord[1] - buf[1]))
+            )
+            // calculate vertex
+            var temp_buf = ([buf[0] + d * (1 - neg[0] * 2), buf[1] + d * (1 - neg[1] * 2)])
+            total_vertices = [buf[0], buf[1], buf[0], temp_buf[1], temp_buf[0], buf[1], temp_buf[0], temp_buf[1]]
         } else if (mode == MODE.POLYGON) {
             if (buf.length < 4) {
                 gl_mode = gl.LINES
