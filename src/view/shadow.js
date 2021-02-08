@@ -39,11 +39,11 @@ class ShadowView {
         const y = event.clientY - rect.top
         var coord = [x/canvas.width*2-1, (-y/canvas.height*2)+1]
 
-        if (entity.gl_mode == this.gl.LINES) {
+        if (entity.gl_mode == this.gl.LINES || entity.gl_mode == this.gl.TRIANGLE_FAN) {
             s *= 2
             entity.vertices[s] = coord[0]
             entity.vertices[s+1] = coord[1]
-        } else if (entity.gl_mode == this.gl.TRIANGLE_STRIP) {
+        } else {
             s = (s*2 + (s % 2 == 0 ? 3 : 1)*2) % 8
             entity.vertices = createSquare(coord, entity.vertices.slice(s, s+2))
         }
@@ -199,9 +199,9 @@ class ShadowView {
         } else if (entity.gl_mode == this.gl.TRIANGLE_STRIP) {
             s = (v_num*2 + (v_num % 2 == 0 ? 3 : 1)*2) % 8
             total_vertices = createSquare(coord, entity.vertices.slice(s, s+2))
-        // } else {
-        //     s = (v_num*2+2) % entity.vertices.length
-        //     total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s, s+2))
+        } else {
+            s = (v_num*2+2) % entity.vertices.length
+            total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s, s+2))
         }
         this.draw(entity.gl_mode, total_vertices, entity.color)
     }
