@@ -25,22 +25,26 @@ class ShadowView {
     }
 
     processMouseRelease(event) {
-        if (this.binding == []) return
-        if (mode != MODE.CURSOR) return
         this.hold = false
+        if (this.binding.length == 0) return
+        if (mode != MODE.CURSOR) return
+
         this.clear()
         var canvas = this.canvas
-        var binding = this.binding
+        var entity = this.binding[0]
+        var s = this.binding[1]
 
         const rect = canvas.getBoundingClientRect()
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
 
-        var s = binding[1]*2
-        binding[0].vertices[s] = (x/canvas.width*2-1)
-        binding[0].vertices[s+1] = (((-y/canvas.height*2)+1))
+        if (entity.gl_mode == this.gl.LINES) {
+            s *= 2
+            entity.vertices[s] = (x/canvas.width*2-1)
+            entity.vertices[s+1] = (((-y/canvas.height*2)+1))
+        }
 
-        this.unbindCursor()
+        // this.unbindCursor()
         this.observer.main.draw()
     }
 
@@ -200,8 +204,9 @@ class ShadowView {
 
     processCursor(coord) {
         if (!this.hold) return this.observer.findV(coord)
+        if (this.binding.length == 0) return
         var v_num = this.binding[1]
-        var entity = this.binding[0] 
+        var entity = this.binding[0]
 
         if (entity.gl_mode == this.gl.LINES) {
             var s = (v_num*2+2) % 4

@@ -32,8 +32,8 @@ class Observer {
     findV(coord) {
         this.clearShadow()
         this.shadow.unbindCursor()
-        var entities = this.main.bank.entities.reverse()
-        for (var i = 0; i < entities.length; i++) {
+        var entities = this.main.bank.entities
+        for (var i = entities.length-1; i >= 0; i--) {
             if (entities[i].gl_mode == this.main.gl.LINES) {
                 // line
                 for (var v = 0; v < 2; v++) {
