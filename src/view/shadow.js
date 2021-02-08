@@ -27,7 +27,7 @@ class ShadowView {
     processMouseRelease(event) {
         this.hold = false
         if (this.binding.length == 0) return
-        if (mode != MODE.CURSOR) return
+        if (mode != MODE.CURSOR || this.binding[1] == -1) return
 
         this.clear()
         var canvas = this.canvas
@@ -37,11 +37,15 @@ class ShadowView {
         const rect = canvas.getBoundingClientRect()
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
+        var coord = [x/canvas.width*2-1, (-y/canvas.height*2)+1]
 
         if (entity.gl_mode == this.gl.LINES) {
             s *= 2
-            entity.vertices[s] = (x/canvas.width*2-1)
-            entity.vertices[s+1] = (((-y/canvas.height*2)+1))
+            entity.vertices[s] = coord[0]
+            entity.vertices[s+1] = coord[1]
+        } else if (entity.gl_mode == this.gl.TRIANGLE_STRIP) {
+            s = (s*2 + (s % 2 == 0 ? 3 : 1)*2) % 8
+            entity.vertices = createSquare(coord, entity.vertices.slice(s, s+2))
         }
 
         // this.unbindCursor()
@@ -80,17 +84,7 @@ class ShadowView {
             gl_mode = gl.TRIANGLE_STRIP
             // finish square
             if (buf.length == 4) {
-                // direction
-                var neg = [(buf[2] - buf[0]) < 0, (buf[3] - buf[1]) < 0]
-                // calculate max distance
-                // make sure it's within the canvas
-                var d = Math.max(
-                    Math.min(Math.abs(1 - buf[1] - 2 * neg[1]), Math.abs(buf[2] - buf[0])),
-                    Math.min(Math.abs(1 - buf[0] - 2 * neg[0]), Math.abs(buf[3] - buf[1]))
-                )
-                // calculate vertex
-                var temp_buf = [buf[0] + d * (1 - neg[0] * 2), buf[1] + d * (1 - neg[1] * 2)]
-                this.observer.putDrawing([buf[0], buf[1], buf[0], temp_buf[1], temp_buf[0], buf[1], temp_buf[0], temp_buf[1]], gl.TRIANGLE_STRIP, color)
+                this.observer.putDrawing(createSquare(buf.slice(2, 4), buf.slice(0, 2)), gl.TRIANGLE_STRIP, color)
                 this.buf = []
             }
         } else if (mode == MODE.POLYGON) {
@@ -138,17 +132,7 @@ class ShadowView {
         } else if (mode == MODE.SQUARE) {
             // create square
             gl_mode = gl.TRIANGLE_STRIP
-            // direction
-            var neg = [(coord[0] - buf[0]) < 0, (coord[1] - buf[1]) < 0]
-            // calculate max distance
-            // make sure it's within the canvas
-            var d = Math.max(
-                Math.min(Math.abs(1 - buf[1] - 2 * neg[1]), Math.abs(coord[0] - buf[0])),
-                Math.min(Math.abs(1 - buf[0] - 2 * neg[0]), Math.abs(coord[1] - buf[1]))
-            )
-            // calculate vertex
-            var temp_buf = ([buf[0] + d * (1 - neg[0] * 2), buf[1] + d * (1 - neg[1] * 2)])
-            total_vertices = [buf[0], buf[1], buf[0], temp_buf[1], temp_buf[0], buf[1], temp_buf[0], temp_buf[1]]
+            total_vertices = createSquare(coord, buf)
         } else if (mode == MODE.POLYGON) {
             if (buf.length < 4) {
                 gl_mode = gl.LINES
@@ -204,13 +188,20 @@ class ShadowView {
 
     processCursor(coord) {
         if (!this.hold) return this.observer.findV(coord)
-        if (this.binding.length == 0) return
+        if (this.binding.length == 0 || this.binding[1] == -1) return
         var v_num = this.binding[1]
         var entity = this.binding[0]
+        var total_vertices, s
 
         if (entity.gl_mode == this.gl.LINES) {
-            var s = (v_num*2+2) % 4
-            var total_vertices = coord.concat(entity.vertices.slice(s, s+2))
+            s = (v_num*2+2) % 4
+            total_vertices = coord.concat(entity.vertices.slice(s, s+2))
+        } else if (entity.gl_mode == this.gl.TRIANGLE_STRIP) {
+            s = (v_num*2 + (v_num % 2 == 0 ? 3 : 1)*2) % 8
+            total_vertices = createSquare(coord, entity.vertices.slice(s, s+2))
+        // } else {
+        //     s = (v_num*2+2) % entity.vertices.length
+        //     total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s, s+2))
         }
         this.draw(entity.gl_mode, total_vertices, entity.color)
     }

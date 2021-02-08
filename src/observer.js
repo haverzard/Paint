@@ -40,8 +40,6 @@
     }
 
     findV(coord) {
-        this.clearShadow()
-        this.shadow.unbindCursor()
         var entities = this.main.bank.entities
         for (var i = entities.length-1; i >= 0; i--) {
             if (entities[i].gl_mode == this.main.gl.LINES) {
@@ -53,15 +51,44 @@
                         return
                     }
                 }
+            } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
+                for (var v = 0; v < 4; v++) {
+                    if (isClose(coord, entities[i].vertices.slice(v*2, v*2 + 2))) {
+                        this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
+                        this.shadow.bindCursor(entities[i], v)
+                        return
+                    }
+                }
+                // special case polygon: square
+                const hoverColor = this.main.bank.entities[i].color
+                var total_vertices = entities[i].vertices.slice(0, 4).concat(entities[i].vertices.slice(6, 8)).concat(entities[i].vertices.slice(4, 6))
+                if (this.isVInside(total_vertices, coord)) {
+                    //Activate Hover color by lowering opacity
+                    this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
+                    this.shadow.bindCursor(entities[i], -1)
+                    return
+                } else {
+                    this.clearShadow()
+                    this.shadow.unbindCursor()
+                }
             } else {
+                // for (var v = 0; v < entities[i].vertices.length/2; v++) {
+                //     if (isClose(coord, entities[i].vertices.slice(v*2, v*2 + 2))) {
+                //         this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
+                //         this.shadow.bindCursor(entities[i], v)
+                //         return
+                //     }
+                // }
                 //Case : entity is either Triangle or Polygon
                 const hoverColor = this.main.bank.entities[i].color
                 if (this.isVInside(entities[i].vertices, coord)) {
                     //Activate Hover color by lowering opacity
-                    hoverColor[3] = 0.6
-                    this.changeColor(i, hoverColor)
+                    this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
+                    this.shadow.bindCursor(entities[i], -1)
+                    return
                 } else {
-                    this.removeHover()
+                    this.clearShadow()
+                    this.shadow.unbindCursor()
                 }
             }
         }
