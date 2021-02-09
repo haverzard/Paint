@@ -58,6 +58,7 @@ class ShadowView {
         var gl = this.gl
         var buf = this.buf
 
+        this.hold = false
         const rect = canvas.getBoundingClientRect()
         const x = event.clientX - rect.left
         const y = event.clientY - rect.top
@@ -97,7 +98,7 @@ class ShadowView {
                     isSamePointWithTolerance(buf[0], buf[length - 2], tolerance) &&
                     isSamePointWithTolerance(buf[1], buf[length - 1], tolerance)
                 ) {
-                    this.observer.putDrawing(buf, gl.TRIANGLE_FAN, color)
+                    this.observer.putDrawing(buf.slice(0, buf.length - 2), gl.TRIANGLE_FAN, color)
                     this.buf = []
                 }
             }
@@ -201,7 +202,8 @@ class ShadowView {
             total_vertices = createSquare(coord, entity.vertices.slice(s, s+2))
         } else {
             s = (v_num*2+2) % entity.vertices.length
-            total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s, s+2))
+            total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s))
+            console.log(total_vertices)
         }
         this.draw(entity.gl_mode, total_vertices, entity.color)
     }
