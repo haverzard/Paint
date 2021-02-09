@@ -70,6 +70,8 @@
                 }
             }
         }
+        this.clearShadow()
+        this.shadow.unbindCursor()
     }
 
     loadModel(file) {

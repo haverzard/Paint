@@ -203,7 +203,6 @@ class ShadowView {
         } else {
             s = (v_num*2+2) % entity.vertices.length
             total_vertices = entity.vertices.slice(0, v_num*2).concat(coord).concat(entity.vertices.slice(s))
-            console.log(total_vertices)
         }
         this.draw(entity.gl_mode, total_vertices, entity.color)
     }
