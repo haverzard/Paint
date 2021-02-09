@@ -107,8 +107,8 @@ function isSamePointWithTolerance(p1, p2, tolerance) {
 
 function isClose(p1, p2) {
   return (
-    isSamePointWithTolerance(p1[0], p2[0], 0.01) &&
-    isSamePointWithTolerance(p1[1], p2[1], 0.01)
+    isSamePointWithTolerance(p1[0], p2[0], SCREEN_RESOLUTION/100.0) &&
+    isSamePointWithTolerance(p1[1], p2[1], SCREEN_RESOLUTION/100.0)
   )
 }
 
