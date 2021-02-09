@@ -1,13 +1,15 @@
 body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background-color: black;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: black;
 }
 
 #canvas-background {
-    background-color: white;
+  background-color: white;
 }
 
-#canvas-background, #main-view, #shadow-view {
-    position: absolute;
+#canvas-background,
+#main-view,
+#shadow-view {
+  position: absolute;
 }

@@ -1,5 +1,5 @@
 function norm2dVertex() {
-    return `
+  return `
     attribute vec2 vPosition;
     attribute vec4 color;
     attribute float depth;

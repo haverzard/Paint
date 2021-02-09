@@ -1,5 +1,5 @@
 function shadowFrag() {
-    return `
+  return `
     precision mediump float;
     varying vec4 vColor;
 
