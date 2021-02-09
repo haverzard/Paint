@@ -51,27 +51,20 @@
                     return
                 }
             }
-            if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
-                // special case polygon: square
-                const hoverColor = this.main.bank.entities[i].color
-                var total_vertices = entities[i].vertices.slice(0, 4).concat(entities[i].vertices.slice(6, 8)).concat(entities[i].vertices.slice(4, 6))
+            if (entities[i].gl_mode != this.main.gl.LINES) {
+                var total_vertices = entities[i].vertices
+                if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
+                    // special case polygon: square
+                    total_vertices = entities[i].vertices.slice(0, 4)
+                        .concat(entities[i].vertices.slice(6, 8))
+                        .concat(entities[i].vertices.slice(4, 6))
+                }
                 if (this.isVInside(total_vertices, coord)) {
                     //Activate Hover color by lowering opacity
                     this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
                     this.shadow.bindCursor(entities[i], -1)
                     return
-                } else {
-                    this.clearShadow()
-                    this.shadow.unbindCursor()
-                }
-            } else if (entities[i].gl_mode == this.main.gl.TRIANGLE_FAN) {
-                //Case : entity is either Triangle or Polygon
-                if (this.isVInside(entities[i].vertices, coord)) {
-                    //Activate Hover color by lowering opacity
-                    this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [1,1,1,1])
-                    this.shadow.bindCursor(entities[i], -1)
-                    return
-                } else {
+                } else if (this.shadow.binding.length && entities[i] == this.shadow.binding[0]) {
                     this.clearShadow()
                     this.shadow.unbindCursor()
                 }
