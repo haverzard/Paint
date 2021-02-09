@@ -1,5 +1,14 @@
+const SCREEN_RESOLUTION = 5
 const MODE = Object.freeze({ CURSOR: 0, LINE: 1, SQUARE: 2, POLYGON: 3 })
 var mode = MODE.CURSOR
+
+function normalizeX(canvas, x) {
+  return x * SCREEN_RESOLUTION * 2 / canvas.width - SCREEN_RESOLUTION
+}
+
+function normalizeY(canvas, y) {
+  return - y * SCREEN_RESOLUTION * 2 / canvas.height + SCREEN_RESOLUTION
+}
 
 function clearBank() {
   observer.clearCanvas()

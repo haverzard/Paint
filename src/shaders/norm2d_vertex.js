@@ -6,7 +6,7 @@ function norm2dVertex() {
     varying vec3 vColor;
 
     void main() {
-        gl_Position = vec4(vPosition, depth, 1.0);
+        gl_Position = vec4(vPosition, depth, `+SCREEN_RESOLUTION+`.0);
         vColor = color;
     }
     `

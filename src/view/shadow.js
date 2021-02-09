@@ -37,7 +37,7 @@ class ShadowView {
     const rect = canvas.getBoundingClientRect()
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
-    var coord = [(x / canvas.width) * 2 - 1, (-y / canvas.height) * 2 + 1]
+    var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
 
     if (
       entity.gl_mode == this.gl.LINES ||
@@ -72,8 +72,8 @@ class ShadowView {
     }
 
     // insert vertex to local buffer
-    buf.push((x / canvas.width) * 2 - 1)
-    buf.push((-y / canvas.height) * 2 + 1)
+    buf.push(normalizeX(canvas, x))
+    buf.push(normalizeY(canvas, y))
 
     var gl_mode
     var color = this.observer.getColor()
@@ -127,7 +127,7 @@ class ShadowView {
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
 
-    var coord = [(x / canvas.width) * 2 - 1, (-y / canvas.height) * 2 + 1]
+    var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
     if (mode == MODE.CURSOR) return this.processCursor(coord)
 
     var gl_mode
@@ -147,10 +147,9 @@ class ShadowView {
         total_vertices = total_vertices.concat(coord)
       } else {
         gl_mode = gl.TRIANGLE_FAN
-        total_vertices = total_vertices.concat([
-          (x / canvas.width) * 2 - 1,
-          (-y / canvas.height) * 2 + 1,
-        ])
+        total_vertices = total_vertices.concat(
+            [normalizeX(canvas, x), normalizeY(canvas, y)]
+        )
       }
     }
 
