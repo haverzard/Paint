@@ -27,7 +27,7 @@ class ShadowView {
   processMouseRelease(event) {
     this.hold = false
     if (this.binding.length == 0) return
-    if (mode != MODE.CURSOR || this.binding[1] == -1) return
+    // if (mode != MODE.CURSOR || this.binding[1] == -1) return
 
     this.clear()
     var canvas = this.canvas
@@ -66,8 +66,10 @@ class ShadowView {
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
     console.log('x: ' + x + ' y: ' + y)
+    var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
     if (mode == MODE.CURSOR) {
       this.hold = true
+      this.observer.changeEntityColor(coord)
       return
     }
 
@@ -77,6 +79,7 @@ class ShadowView {
 
     var gl_mode
     var color = this.observer.getColor()
+
     if (mode == MODE.LINE) {
       gl_mode = gl.LINES
       // finish line
@@ -100,7 +103,7 @@ class ShadowView {
       if (buf.length > 4) {
         gl_mode = gl.TRIANGLE_FAN
         let length = buf.length
-        if (isClose(buf.slice(0, 2), buf.slice(length-2, length))) {
+        if (isClose(buf.slice(0, 2), buf.slice(length - 2, length))) {
           this.observer.putDrawing(
             buf.slice(0, buf.length - 2),
             gl.TRIANGLE_FAN,
@@ -147,9 +150,10 @@ class ShadowView {
         total_vertices = total_vertices.concat(coord)
       } else {
         gl_mode = gl.TRIANGLE_FAN
-        total_vertices = total_vertices.concat(
-            [normalizeX(canvas, x), normalizeY(canvas, y)]
-        )
+        total_vertices = total_vertices.concat([
+          normalizeX(canvas, x),
+          normalizeY(canvas, y),
+        ])
       }
     }
 

@@ -90,4 +90,25 @@ class Observer {
     var draw = () => this.main.draw()
     this.main.bank.loadFromFile(file, draw)
   }
+
+  // If the click area doesn't belong to any entity then return null
+  changeEntityColor(p) {
+    const color = this.getColor()
+    console.log('--')
+    console.log(color)
+    var entities = this.main.bank.entities
+    for (var i = entities.length - 1; i >= 0; i--) {
+      for (var v = 0; v < entities[i].vertices.length / 2; v++) {
+        var total_vertices = entities[i].vertices
+        if (isVInside(total_vertices, p)) {
+          if (color !== entities[i].color) {
+            entities[i].color = [...color]
+            this.main.draw()
+          }
+          return
+        }
+      }
+    }
+    return null
+  }
 }
