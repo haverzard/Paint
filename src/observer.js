@@ -30,12 +30,10 @@ class Observer {
       document.getElementById('color-picker').value.substr(1, 6),
       16,
     )
-    // var opacity = document.getElementById("opacity-slider").value
     return [
       Math.floor(color / 65536) / 255,
       Math.floor((color % 65536) / 256) / 255,
       (color % 256) / 255,
-      1.0,
     ]
   }
 

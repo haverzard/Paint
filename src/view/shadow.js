@@ -183,7 +183,7 @@ class ShadowView {
     // send buffer to attribute in shaders
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
     var colorRGBA = gl.getAttribLocation(shaderProgram, 'color')
-    gl.vertexAttribPointer(colorRGBA, 4, gl.FLOAT, false, 0, 0)
+    gl.vertexAttribPointer(colorRGBA, 3, gl.FLOAT, false, 0, 0)
     gl.enableVertexAttribArray(colorRGBA)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
