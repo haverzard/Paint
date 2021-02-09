@@ -181,7 +181,7 @@ class ShadowView {
         gl.enableVertexAttribArray(coord)
     
         // Enable the depth test
-        this.gl.enable(gl.DEPTH_TEST)
+        gl.enable(gl.DEPTH_TEST)
     
         // Draw the entity
         gl.drawArrays(gl_mode, 0, vertices.length/2)

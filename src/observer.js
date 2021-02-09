@@ -163,24 +163,4 @@
         }
         return count % 2 == 1
     }
-
-    changeColor(entityIdx, color) {
-        console.log(this.main.bank.entities[entityIdx])
-        this.main.bank.entities[entityIdx] = {
-            ...this.main.bank.entities[entityIdx],
-            color: [...color],
-        }
-        this.main.draw()
-    }
-
-    removeHover() {
-        const entities = this.main.bank.entities
-        for (let i = 0; i < entities.length; i++) {
-            if (entities[i].color[3] !== 1) {
-                // Deactivate hover
-                entities[i].color[3] = 1
-            }
-        }
-        this.main.draw()
-    }
 }
