@@ -47,6 +47,51 @@ function createSquare(p1, p2) {
   ]
 }
 
+function convertToPoints(vertices) {
+  let points = []
+  for (let i = 0; i < vertices.length; i += 2) {
+    points.push([vertices[i], vertices[i + 1]])
+  }
+  return points
+}
+
+function convertToVertices(points) {
+  let vertices = []
+  for (let i = 0; i < points.length; i++) {
+    vertices = vertices.concat(points[i])
+  }
+  return vertices
+}
+
+function convertToShape(gl_mode) {
+  if (gl_mode == 1) return "line"
+  else if (gl_mode == 5) return "square"
+  else return "polygon"
+}
+
+function convertToGLMODE(shapeType) {
+  if (shapeType == "line") return 1
+  else if (shapeType == "square") return 5
+  else return 6
+}
+
+function validPoints(points) {
+  for (var i = 0; i < points.length; i++) {
+    let p = points[i]
+    if (p[0] > 1.0 || p[0] < 0.0 || p[1] > 1.0 || p[1] < 0.0) return false
+  }
+  return true
+}
+
+function validColor(color) {
+  let colors = ["RED", "GREEN", "BLUE"]
+  for (var i = 0; i < 3; i++) {
+    let c = colors[i]
+    if (!color[c] || color[c] < 0.0 || color > 1.0) return false
+  }
+  return true
+}
+
 function isSamePointWithTolerance(p1, p2, tolerance) {
   return p2 > p1 - tolerance && p2 < p1 + tolerance
 }
@@ -111,10 +156,7 @@ function doIntersect(p1, q1, p2, q2) {
 }
 
 function isVInside(vertices, p) {
-  const points = []
-  for (let i = 0; i < vertices.length; i += 2) {
-    points.push([vertices[i], vertices[i + 1]])
-  }
+  const points = convertToPoints(vertices)
   const n = points.length
   if (n < 3) {
     return false
