@@ -47,48 +47,18 @@ class MainView {
     var gl = this.gl
     var shaderProgram = this.shaderProgram
 
-    // create buffer for vertex & color - for shaders
-    var vertex_buffer = gl.createBuffer()
     var vertices_info = this.getVerticesInfo()
     console.log(vertices_info)
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(vertices_info[0]),
-      gl.STATIC_DRAW,
-    )
 
-    var color_buffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(vertices_info[1]),
-      gl.STATIC_DRAW,
-    )
+    // create buffer for vertex, color, & depth - for shaders
+    var vertex_buffer = createBuffer(gl, vertices_info[0])
+    var color_buffer = createBuffer(gl, vertices_info[1])
+    var depth_buffer = createBuffer(gl, vertices_info[2])
 
-    var depth_buffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, depth_buffer)
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(vertices_info[2]),
-      gl.STATIC_DRAW,
-    )
-
-    // send buffer to attribute in shaders
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-    var colorRGBA = gl.getAttribLocation(shaderProgram, 'color')
-    gl.vertexAttribPointer(colorRGBA, 3, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(colorRGBA)
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, depth_buffer)
-    var depth = gl.getAttribLocation(shaderProgram, 'depth')
-    gl.vertexAttribPointer(depth, 1, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(depth)
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    var coord = gl.getAttribLocation(shaderProgram, 'vPosition')
-    gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(coord)
+    // bind buffer to attribute in shaders
+    bindBuffer(gl, shaderProgram, color_buffer, 3, 'color')
+    bindBuffer(gl, shaderProgram, depth_buffer, 1, 'depth')
+    bindBuffer(gl, shaderProgram, vertex_buffer, 2, 'vPosition')
 
     /* Step5: Drawing the required object (triangle) */
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)

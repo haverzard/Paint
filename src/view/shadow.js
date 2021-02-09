@@ -99,12 +99,8 @@ class ShadowView {
       gl_mode = gl.LINES
       if (buf.length > 4) {
         gl_mode = gl.TRIANGLE_FAN
-        const tolerance = 0.01
-        length = buf.length
-        if (
-          isSamePointWithTolerance(buf[0], buf[length - 2], tolerance) &&
-          isSamePointWithTolerance(buf[1], buf[length - 1], tolerance)
-        ) {
+        let length = buf.length
+        if (isClose(buf.slice(0, 2), buf.slice(length-2, length))) {
           this.observer.putDrawing(
             buf.slice(0, buf.length - 2),
             gl.TRIANGLE_FAN,
@@ -172,24 +168,15 @@ class ShadowView {
     for (var i = 0; i < vertices.length / 2; i++) colors = colors.concat(color)
 
     // create buffer for vertex & color - for shaders
-    var vertex_buffer = gl.createBuffer()
+    var vertex_buffer = createBuffer(gl, vertices)
+    var color_buffer = createBuffer(gl, colors)
+
+    // bind buffer to attribute in shaders
+    bindBuffer(gl, shaderProgram, color_buffer, 3, 'color')
+    bindBuffer(gl, shaderProgram, vertex_buffer, 2, 'vPosition')
+
+    // bind
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW)
-
-    var color_buffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW)
-
-    // send buffer to attribute in shaders
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer)
-    var colorRGBA = gl.getAttribLocation(shaderProgram, 'color')
-    gl.vertexAttribPointer(colorRGBA, 3, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(colorRGBA)
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    var coord = gl.getAttribLocation(shaderProgram, 'vPosition')
-    gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(coord)
 
     // Enable the depth test
     gl.enable(gl.DEPTH_TEST)

@@ -1,22 +1,37 @@
 var observer
 
-function clearBank() {
-  observer.clearCanvas()
+function createBuffer(gl, data, DataClass=Float32Array, bufferType=gl.ARRAY_BUFFER, draw=gl.DYNAMIC_DRAW) {
+  var buffer = gl.createBuffer()
+  gl.bindBuffer(bufferType, buffer)
+  gl.bufferData(bufferType, new DataClass(data), draw)
+  return buffer
 }
 
-function saveModel() {
-  observer.main.bank.saveToFile()
+function bindBuffer(gl, shaderProgram, buffer, dimension, attrName, bufferType=gl.ARRAY_BUFFER, dataType=gl.FLOAT) {
+  gl.bindBuffer(bufferType, buffer)
+  var attr = gl.getAttribLocation(shaderProgram, attrName)
+  gl.vertexAttribPointer(attr, dimension, dataType, false, 0, 0)
+  gl.enableVertexAttribArray(attr)
 }
 
-function isSamePointWithTolerance(p1, p2, tolerance) {
-  return p2 > p1 - tolerance && p2 < p1 + tolerance
-}
+function loadShader(gl, vertCoder, fragCoder) {
+  var vertShader = gl.createShader(gl.VERTEX_SHADER)
+  gl.shaderSource(vertShader, vertCoder())
+  gl.compileShader(vertShader)
 
-function isClose(p1, p2) {
-  return (
-    isSamePointWithTolerance(p1[0], p2[0], 0.01) &&
-    isSamePointWithTolerance(p1[1], p2[1], 0.01)
-  )
+  var fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+  gl.shaderSource(fragShader, fragCoder())
+  gl.compileShader(fragShader)
+
+  // create shader program
+  var shaderProgram = gl.createProgram()
+  gl.attachShader(shaderProgram, vertShader)
+  gl.attachShader(shaderProgram, fragShader)
+
+  gl.linkProgram(shaderProgram)
+  gl.useProgram(shaderProgram)
+
+  return shaderProgram
 }
 
 window.onload = () => {

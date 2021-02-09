@@ -1,6 +1,14 @@
 const MODE = Object.freeze({ CURSOR: 0, LINE: 1, SQUARE: 2, POLYGON: 3 })
 var mode = MODE.CURSOR
 
+function clearBank() {
+  observer.clearCanvas()
+}
+
+function saveModel() {
+  observer.main.bank.saveToFile()
+}
+
 function switchMode(new_mode) {
   mode = new_mode
   observer.clearShadow()
@@ -37,4 +45,15 @@ function createSquare(p1, p2) {
     temp_buf[0],
     temp_buf[1],
   ]
+}
+
+function isSamePointWithTolerance(p1, p2, tolerance) {
+  return p2 > p1 - tolerance && p2 < p1 + tolerance
+}
+
+function isClose(p1, p2) {
+  return (
+    isSamePointWithTolerance(p1[0], p2[0], 0.01) &&
+    isSamePointWithTolerance(p1[1], p2[1], 0.01)
+  )
 }
