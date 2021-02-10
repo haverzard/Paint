@@ -29,30 +29,39 @@ class ShadowView {
     if (this.binding.length == 0) return
     // if (mode != MODE.CURSOR || this.binding[1] == -1) return
 
-    this.clear()
-    var canvas = this.canvas
-    var entity = this.binding[0]
-    var s = this.binding[1]
+    if (this.binding[1] === -1) {
+      if (this.observer.main.editMode === EDITMODE.RESIZE) {
+        this.clear()
+        var canvas = this.canvas
+        var entity = this.binding[0]
+        var s = this.binding[1]
 
-    const rect = canvas.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-    var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
+        const rect = canvas.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+        var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
 
-    if (
-      entity.gl_mode == this.gl.LINES ||
-      entity.gl_mode == this.gl.TRIANGLE_FAN
-    ) {
-      s *= 2
-      entity.vertices[s] = coord[0]
-      entity.vertices[s + 1] = coord[1]
-    } else {
-      s = (s * 2 + (s % 2 == 0 ? 3 : 1) * 2) % 8
-      entity.vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
+        if (
+          entity.gl_mode == this.gl.LINES ||
+          entity.gl_mode == this.gl.TRIANGLE_FAN
+        ) {
+          s *= 2
+          entity.vertices[s] = coord[0]
+          entity.vertices[s + 1] = coord[1]
+        } else {
+          s = (s * 2 + (s % 2 == 0 ? 3 : 1) * 2) % 8
+          entity.vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
+        }
+
+        // this.unbindCursor()
+        this.observer.main.draw()
+      } else {
+        const color = this.observer.getColor()
+        if (JSON.stringify(color) != JSON.stringify(this.binding[0].color)) {
+          return this.observer.changeEntityColor(this.binding[0], color)
+        }
+      }
     }
-
-    // this.unbindCursor()
-    this.observer.main.draw()
   }
 
   processMousePress(event) {
@@ -66,21 +75,10 @@ class ShadowView {
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
     console.log('x: ' + x + ' y: ' + y)
-    // var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
     var gl_mode
     var color = this.observer.getColor()
-
     if (mode == MODE.CURSOR) {
       this.hold = true
-      if (this.binding[1] === -1) {
-        //hover/click in entity area
-        gl_mode = this.binding[0].gl_mode
-        if (color !== this.binding[0].color) {
-          this.observer.putDrawing(this.binding[0].vertices, gl_mode, color)
-        }
-      }
-      // console.log(this.binding)
-      // this.observer.changeEntityColor(coord)
       return
     }
 
@@ -198,6 +196,7 @@ class ShadowView {
 
   processCursor(coord) {
     if (!this.hold) return this.observer.findV(coord)
+
     if (this.binding.length == 0 || this.binding[1] == -1) return
     var v_num = this.binding[1]
     var entity = this.binding[0]

@@ -1,13 +1,14 @@
 const SCREEN_RESOLUTION = 5
 const MODE = Object.freeze({ CURSOR: 0, LINE: 1, SQUARE: 2, POLYGON: 3 })
+const EDITMODE = Object.freeze({ RESIZE: 0, RECOLOR: 1 })
 var mode = MODE.CURSOR
 
 function normalizeX(canvas, x) {
-  return x * SCREEN_RESOLUTION * 2 / canvas.width - SCREEN_RESOLUTION
+  return (x * SCREEN_RESOLUTION * 2) / canvas.width - SCREEN_RESOLUTION
 }
 
 function normalizeY(canvas, y) {
-  return - y * SCREEN_RESOLUTION * 2 / canvas.height + SCREEN_RESOLUTION
+  return (-y * SCREEN_RESOLUTION * 2) / canvas.height + SCREEN_RESOLUTION
 }
 
 function clearBank() {
@@ -21,6 +22,19 @@ function saveModel() {
 function switchMode(new_mode) {
   mode = new_mode
   observer.clearShadow()
+}
+
+function toggleEditMode() {
+  observer.changeEditMode()
+  const cur_mode = observer.main.editMode
+  const toggle_btn = document.getElementById('edit-toggle-btn')
+  if (toggle_btn) {
+    if (cur_mode === EDITMODE.RESIZE) {
+      toggle_btn.innerHTML = 'Resize Mode'
+    } else {
+      toggle_btn.innerHTML = 'Recolor Mode'
+    }
+  }
 }
 
 function getGL(canvas) {
@@ -39,8 +53,14 @@ function createSquare(p1, p2) {
   // calculate max distance
   // make sure it's within the canvas
   var d = Math.max(
-    Math.min(Math.abs(SCREEN_RESOLUTION - p2[1] - SCREEN_RESOLUTION * 2 * neg[1]), Math.abs(p1[0] - p2[0])),
-    Math.min(Math.abs(SCREEN_RESOLUTION - p2[0] - SCREEN_RESOLUTION * 2 * neg[0]), Math.abs(p1[1] - p2[1])),
+    Math.min(
+      Math.abs(SCREEN_RESOLUTION - p2[1] - SCREEN_RESOLUTION * 2 * neg[1]),
+      Math.abs(p1[0] - p2[0]),
+    ),
+    Math.min(
+      Math.abs(SCREEN_RESOLUTION - p2[0] - SCREEN_RESOLUTION * 2 * neg[0]),
+      Math.abs(p1[1] - p2[1]),
+    ),
   )
   // calculate vertex
   var temp_buf = [p2[0] + d * (1 - neg[0] * 2), p2[1] + d * (1 - neg[1] * 2)]
@@ -73,14 +93,14 @@ function convertToVertices(points) {
 }
 
 function convertToShape(gl_mode) {
-  if (gl_mode == 1) return "line"
-  else if (gl_mode == 5) return "square"
-  else return "polygon"
+  if (gl_mode == 1) return 'line'
+  else if (gl_mode == 5) return 'square'
+  else return 'polygon'
 }
 
 function convertToGLMODE(shapeType) {
-  if (shapeType == "line") return 1
-  else if (shapeType == "square") return 5
+  if (shapeType == 'line') return 1
+  else if (shapeType == 'square') return 5
   else return 6
 }
 
@@ -93,7 +113,7 @@ function validPoints(points) {
 }
 
 function validColor(color) {
-  let colors = ["RED", "GREEN", "BLUE"]
+  let colors = ['RED', 'GREEN', 'BLUE']
   for (var i = 0; i < 3; i++) {
     let c = colors[i]
     if (!color[c] || color[c] < 0.0 || color > 1.0) return false
@@ -107,8 +127,8 @@ function isSamePointWithTolerance(p1, p2, tolerance) {
 
 function isClose(p1, p2) {
   return (
-    isSamePointWithTolerance(p1[0], p2[0], SCREEN_RESOLUTION/100.0) &&
-    isSamePointWithTolerance(p1[1], p2[1], SCREEN_RESOLUTION/100.0)
+    isSamePointWithTolerance(p1[0], p2[0], SCREEN_RESOLUTION / 100.0) &&
+    isSamePointWithTolerance(p1[1], p2[1], SCREEN_RESOLUTION / 100.0)
   )
 }
 
@@ -190,3 +210,4 @@ function isVInside(vertices, p) {
   return count % 2 == 1
 }
 
+const equals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i])

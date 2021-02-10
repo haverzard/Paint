@@ -13,3 +13,8 @@ body {
 #shadow-view {
   position: absolute;
 }
+/* 
+.active {
+  background-color: rgb(153, 153, 255);
+  transform: scale(1.1);
+} */

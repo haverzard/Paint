@@ -16,10 +16,21 @@
   </head>
   <body>
     <div>
-      <button onclick="switchMode(MODE.CURSOR);">Cursor</button>
-      <button onclick="switchMode(MODE.LINE);">Line</button>
-      <button onclick="switchMode(MODE.SQUARE);">Square</button>
-      <button onclick="switchMode(MODE.POLYGON);">Polygon</button>
+      <button onclick="switchMode(MODE.CURSOR);">
+        Cursor
+      </button>
+      <button onclick="switchMode(MODE.LINE);">
+        Line
+      </button>
+      <button onclick="switchMode(MODE.SQUARE);">
+        Square
+      </button>
+      <button onclick="switchMode(MODE.POLYGON);">
+        Polygon
+      </button>
+      <button id="edit-toggle-btn" onclick="toggleEditMode();">
+        Resize Mode
+      </button>
       <button onclick="clearBank()">Clear</button>
       <input type="color" id="color-picker" value="#000000" />
       <button onclick="saveModel()">Save</button>

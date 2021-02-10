@@ -9,6 +9,7 @@ class Observer {
     this.main.bank.addEntity(
       new Entity(this.main.getVertices().length / 2, buf, gl_mode, color),
     )
+    console.log(this.main.bank.entities)
     // redraw
     this.main.draw()
   }
@@ -89,5 +90,22 @@ class Observer {
   loadModel(file) {
     var draw = () => this.main.draw()
     this.main.bank.loadFromFile(file, draw)
+  }
+
+  changeEntityColor(entity, color) {
+    const entities = this.main.bank.entities
+    console.log('a')
+    for (var i = entities.length - 1; i >= 0; i--) {
+      if (JSON.stringify(entities[i]) === JSON.stringify(entity)) {
+        entities[i].color = [...color]
+        this.main.draw()
+        return
+      }
+    }
+  }
+
+  changeEditMode() {
+    this.main.editMode = (this.main.editMode + 1) % 2
+    console.log(this.main.editMode)
   }
 }

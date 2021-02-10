@@ -8,7 +8,7 @@ class MainView {
     // attributes
     this.bank = new EntityBank()
     this.gl = getGL(this.canvas)
-
+    this.editMode = EDITMODE.RESIZE
     // init GL
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
     this.gl.clearColor(0.0, 0.0, 0.0, 0.0)
@@ -48,7 +48,7 @@ class MainView {
     var shaderProgram = this.shaderProgram
 
     var vertices_info = this.getVerticesInfo()
-    console.log(vertices_info)
+    // console.log(vertices_info)
 
     // create buffer for vertex, color, & depth - for shaders
     var vertex_buffer = createBuffer(gl, vertices_info[0])
