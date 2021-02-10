@@ -39,8 +39,8 @@ function createSquare(p1, p2) {
   // calculate max distance
   // make sure it's within the canvas
   var d = Math.max(
-    Math.min(Math.abs(1 - p2[1] - 2 * neg[1]), Math.abs(p1[0] - p2[0])),
-    Math.min(Math.abs(1 - p2[0] - 2 * neg[0]), Math.abs(p1[1] - p2[1])),
+    Math.min(Math.abs(SCREEN_RESOLUTION - p2[1] - SCREEN_RESOLUTION * 2 * neg[1]), Math.abs(p1[0] - p2[0])),
+    Math.min(Math.abs(SCREEN_RESOLUTION - p2[0] - SCREEN_RESOLUTION * 2 * neg[0]), Math.abs(p1[1] - p2[1])),
   )
   // calculate vertex
   var temp_buf = [p2[0] + d * (1 - neg[0] * 2), p2[1] + d * (1 - neg[1] * 2)]
