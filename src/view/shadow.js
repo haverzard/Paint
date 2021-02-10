@@ -66,19 +66,27 @@ class ShadowView {
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
     console.log('x: ' + x + ' y: ' + y)
-    var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
+    // var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
+    var gl_mode
+    var color = this.observer.getColor()
+
     if (mode == MODE.CURSOR) {
       this.hold = true
-      this.observer.changeEntityColor(coord)
+      if (this.binding[1] === -1) {
+        //hover/click in entity area
+        gl_mode = this.binding[0].gl_mode
+        if (color !== this.binding[0].color) {
+          this.observer.putDrawing(this.binding[0].vertices, gl_mode, color)
+        }
+      }
+      // console.log(this.binding)
+      // this.observer.changeEntityColor(coord)
       return
     }
 
     // insert vertex to local buffer
     buf.push(normalizeX(canvas, x))
     buf.push(normalizeY(canvas, y))
-
-    var gl_mode
-    var color = this.observer.getColor()
 
     if (mode == MODE.LINE) {
       gl_mode = gl.LINES
