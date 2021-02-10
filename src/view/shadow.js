@@ -29,33 +29,33 @@ class ShadowView {
     if (this.binding.length == 0) return
     // if (mode != MODE.CURSOR || this.binding[1] == -1) return
 
-    if (this.binding[1] === -1) {
-      if (this.observer.main.editMode === EDITMODE.RESIZE) {
-        this.clear()
-        var canvas = this.canvas
-        var entity = this.binding[0]
-        var s = this.binding[1]
+    if (this.observer.main.editMode === EDITMODE.RESIZE) {
+      this.clear()
+      var canvas = this.canvas
+      var entity = this.binding[0]
+      var s = this.binding[1]
 
-        const rect = canvas.getBoundingClientRect()
-        const x = event.clientX - rect.left
-        const y = event.clientY - rect.top
-        var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
+      const rect = canvas.getBoundingClientRect()
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+      var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
 
-        if (
-          entity.gl_mode == this.gl.LINES ||
-          entity.gl_mode == this.gl.TRIANGLE_FAN
-        ) {
-          s *= 2
-          entity.vertices[s] = coord[0]
-          entity.vertices[s + 1] = coord[1]
-        } else {
-          s = (s * 2 + (s % 2 == 0 ? 3 : 1) * 2) % 8
-          entity.vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
-        }
-
-        // this.unbindCursor()
-        this.observer.main.draw()
+      if (
+        entity.gl_mode == this.gl.LINES ||
+        entity.gl_mode == this.gl.TRIANGLE_FAN
+      ) {
+        s *= 2
+        entity.vertices[s] = coord[0]
+        entity.vertices[s + 1] = coord[1]
       } else {
+        s = (s * 2 + (s % 2 == 0 ? 3 : 1) * 2) % 8
+        entity.vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
+      }
+
+      // this.unbindCursor()
+      this.observer.main.draw()
+    } else {
+      if (this.binding[1] === -1) {
         const color = this.observer.getColor()
         if (JSON.stringify(color) != JSON.stringify(this.binding[0].color)) {
           return this.observer.changeEntityColor(this.binding[0], color)
