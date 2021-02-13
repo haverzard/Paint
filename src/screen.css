@@ -13,8 +13,17 @@ body {
 #shadow-view {
   position: absolute;
 }
-/* 
-.active {
-  background-color: rgb(153, 153, 255);
-  transform: scale(1.1);
-} */
+
+.btn {
+  border: none;
+  outline: none;
+  padding: 3px 3px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.active,
+.btn:hover {
+  background-color: #666;
+  color: white;
+}

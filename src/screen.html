@@ -15,17 +15,17 @@
     <script src=""></script>
   </head>
   <body>
-    <div>
-      <button onclick="switchMode(MODE.CURSOR);">
+    <div id="myDIV">
+      <button onclick="switchMode(MODE.CURSOR);" class="btn active">
         Cursor
       </button>
-      <button onclick="switchMode(MODE.LINE);">
+      <button onclick="switchMode(MODE.LINE);" class="btn">
         Line
       </button>
-      <button onclick="switchMode(MODE.SQUARE);">
+      <button onclick="switchMode(MODE.SQUARE);" class="btn">
         Square
       </button>
-      <button onclick="switchMode(MODE.POLYGON);">
+      <button onclick="switchMode(MODE.POLYGON);" class="btn">
         Polygon
       </button>
       <button id="edit-toggle-btn" onclick="toggleEditMode();">
