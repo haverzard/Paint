@@ -29,7 +29,8 @@ class ShadowView {
     if (this.binding.length == 0) return
     if (mode != MODE.CURSOR) return
 
-    if (this.observer.main.editMode === EDITMODE.RESIZE && this.binding[1] !== -1) {
+    if (this.observer.main.editMode === EDITMODE.RESIZE) {
+      if (this.binding[1] !== -1) return
       this.clear()
       var canvas = this.canvas
       var entity = this.binding[0]
