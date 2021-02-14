@@ -27,9 +27,9 @@ class ShadowView {
   processMouseRelease(event) {
     this.hold = false
     if (this.binding.length == 0) return
-    // if (mode != MODE.CURSOR || this.binding[1] == -1) return
+    if (mode != MODE.CURSOR) return
 
-    if (this.observer.main.editMode === EDITMODE.RESIZE) {
+    if (this.observer.main.editMode === EDITMODE.RESIZE && this.binding[1] !== -1) {
       this.clear()
       var canvas = this.canvas
       var entity = this.binding[0]
@@ -41,25 +41,23 @@ class ShadowView {
       var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
 
       if (
-        entity.gl_mode == this.gl.LINES ||
-        entity.gl_mode == this.gl.TRIANGLE_FAN
+        entity.shape == SHAPE.LINE ||
+        entity.shape == SHAPE.POLYGON
       ) {
         s *= 2
         entity.vertices[s] = coord[0]
         entity.vertices[s + 1] = coord[1]
-      } else {
-        s = (s * 2 + (s % 2 == 0 ? 3 : 1) * 2) % 8
+      } else if (entity.shape == SHAPE.SQUARE) {
+        s = (s * 2 + 4) % 8
         entity.vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
       }
 
       // this.unbindCursor()
       this.observer.main.draw()
-    } else {
-      if (this.binding[1] === -1) {
-        const color = this.observer.getColor()
-        if (JSON.stringify(color) != JSON.stringify(this.binding[0].color)) {
-          return this.observer.changeEntityColor(this.binding[0], color)
-        }
+    } else if (this.binding[1] === -1) {
+      const color = this.observer.getColor()
+      if (JSON.stringify(color) != JSON.stringify(this.binding[0].color)) {
+        return this.observer.changeEntityColor(this.binding[0], color)
       }
     }
   }
@@ -75,8 +73,8 @@ class ShadowView {
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
     console.log('x: ' + x + ' y: ' + y)
-    var gl_mode
-    var color = this.observer.getColor()
+
+    // hold press for cursor
     if (mode == MODE.CURSOR) {
       this.hold = true
       return
@@ -86,47 +84,48 @@ class ShadowView {
     buf.push(normalizeX(canvas, x))
     buf.push(normalizeY(canvas, y))
 
+    var shape
+    var color = this.observer.getColor()
+
     if (mode == MODE.LINE) {
-      gl_mode = gl.LINES
+      shape = SHAPE.LINE
       // finish line
       if (buf.length == 4) {
-        this.observer.putDrawing(buf, gl.LINES, color)
+        this.observer.putDrawing(buf, shape, color)
         this.buf = []
       }
     } else if (mode == MODE.SQUARE) {
-      gl_mode = gl.TRIANGLE_STRIP
+      shape = SHAPE.SQUARE
       // finish square
       if (buf.length == 4) {
         this.observer.putDrawing(
           createSquare(buf.slice(2, 4), buf.slice(0, 2)),
-          gl.TRIANGLE_STRIP,
+          shape,
           color,
         )
         this.buf = []
       }
     } else if (mode == MODE.POLYGON) {
-      gl_mode = gl.LINES
+      shape = SHAPE.LINE
       if (buf.length > 4) {
-        gl_mode = gl.TRIANGLE_FAN
+        shape = SHAPE.POLYGON
         let length = buf.length
         if (isClose(buf.slice(0, 2), buf.slice(length - 2, length))) {
           this.observer.putDrawing(
             buf.slice(0, buf.length - 2),
-            gl.TRIANGLE_FAN,
+            shape,
             color,
           )
           this.buf = []
         }
       }
     }
-    console.log(this.buf)
-    if (this.buf) this.draw(gl_mode, this.buf, color)
+    if (this.buf) this.draw(shape, this.buf, color)
   }
 
   processMouseMove(event) {
     // simplify variables
     var canvas = this.canvas
-    var gl = this.gl
     var buf = this.buf
 
     // ignore empty buf to reduce computation
@@ -139,35 +138,30 @@ class ShadowView {
     var coord = [normalizeX(canvas, x), normalizeY(canvas, y)]
     if (mode == MODE.CURSOR) return this.processCursor(coord)
 
-    var gl_mode
+    var shape
     var total_vertices = this.buf
 
     if (mode == MODE.LINE) {
       // create line
-      gl_mode = gl.LINES
+      shape = SHAPE.LINE
       total_vertices = total_vertices.concat(coord)
     } else if (mode == MODE.SQUARE) {
       // create square
-      gl_mode = gl.TRIANGLE_STRIP
+      shape = SHAPE.SQUARE
       total_vertices = createSquare(coord, buf)
     } else if (mode == MODE.POLYGON) {
-      if (buf.length < 4) {
-        gl_mode = gl.LINES
-        total_vertices = total_vertices.concat(coord)
-      } else {
-        gl_mode = gl.TRIANGLE_FAN
-        total_vertices = total_vertices.concat([
-          normalizeX(canvas, x),
-          normalizeY(canvas, y),
-        ])
+      shape = SHAPE.POLYGON
+      if (buf.length <= 4) {
+        shape = SHAPE.LINE
       }
+      total_vertices = total_vertices.concat(coord)
     }
 
     // draw to canvas
-    this.draw(gl_mode, total_vertices, this.observer.getColor())
+    this.draw(shape, total_vertices, this.observer.getColor())
   }
 
-  draw(gl_mode, vertices, color) {
+  draw(shape, vertices, color) {
     // simplify variables
     var gl = this.gl
     var shaderProgram = this.shaderProgram
@@ -191,7 +185,7 @@ class ShadowView {
     gl.enable(gl.DEPTH_TEST)
 
     // Draw the entity
-    gl.drawArrays(gl_mode, 0, vertices.length / 2)
+    gl.drawArrays(convertToGLMODE(shape), 0, vertices.length / 2)
   }
 
   processCursor(coord) {
@@ -202,20 +196,23 @@ class ShadowView {
     var entity = this.binding[0]
     var total_vertices, s
 
-    if (entity.gl_mode == this.gl.LINES) {
-      s = (v_num * 2 + 2) % 4
+    if (entity.shape == SHAPE.LINE) {
+      // get vertex selection
+      s = (v_num * 2 + 2) % entity.vertices.length
       total_vertices = coord.concat(entity.vertices.slice(s, s + 2))
-    } else if (entity.gl_mode == this.gl.TRIANGLE_STRIP) {
-      s = (v_num * 2 + (v_num % 2 == 0 ? 3 : 1) * 2) % 8
+    } else if (entity.shape == SHAPE.SQUARE) {
+      // get vertex selection
+      s = (v_num * 2 + 4) % entity.vertices.length
       total_vertices = createSquare(coord, entity.vertices.slice(s, s + 2))
-    } else {
+    } else if (entity.shape == SHAPE.POLYGON) {
+      // get vertex selection
       s = (v_num * 2 + 2) % entity.vertices.length
       total_vertices = entity.vertices
         .slice(0, v_num * 2)
         .concat(coord)
         .concat(entity.vertices.slice(s))
     }
-    this.draw(entity.gl_mode, total_vertices, entity.color)
+    this.draw(entity.shape, total_vertices, entity.color)
   }
 
   bindCursor(entity, v_num) {

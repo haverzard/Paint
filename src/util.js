@@ -1,5 +1,6 @@
 const SCREEN_RESOLUTION = 5
 const MODE = Object.freeze({ CURSOR: 0, LINE: 1, SQUARE: 2, POLYGON: 3 })
+const SHAPE = Object.freeze({ LINE: 1, SQUARE: 2, POLYGON: 3 })
 const EDITMODE = Object.freeze({ RESIZE: 0, RECOLOR: 1 })
 var mode = MODE.CURSOR
 
@@ -76,11 +77,11 @@ function createSquare(p1, p2) {
   return [
     p2[0],
     p2[1],
-    p2[0],
-    temp_buf[1],
     temp_buf[0],
     p2[1],
     temp_buf[0],
+    temp_buf[1],
+    p2[0],
     temp_buf[1],
   ]
 }
@@ -101,22 +102,36 @@ function convertToVertices(points) {
   return vertices
 }
 
-function convertToShape(gl_mode) {
-  if (gl_mode == 1) return 'line'
-  else if (gl_mode == 5) return 'square'
-  else return 'polygon'
+function convertShapeToStr(shape) {
+  if (shape == SHAPE.LINE) return "line"
+  else if (shape == SHAPE.SQUARE) return "square"
+  else if (shape == SHAPE.POLYGON) return "polygon"
+  else return -1
 }
 
-function convertToGLMODE(shapeType) {
-  if (shapeType == 'line') return 1
-  else if (shapeType == 'square') return 5
-  else return 6
+function convertStrToShape(shape) {
+  if (shape == "line") return SHAPE.LINE
+  else if (shape == "square") return SHAPE.POLYGON
+  else if (shape == "polygon") return SHAPE.POLYGON
+  else return -1
+}
+
+function convertToGLMODE(shape) {
+  if (shape == SHAPE.LINE) return 1
+  else if (shape == SHAPE.SQUARE) return 6
+  else if (shape == SHAPE.POLYGON) return 6
+  else return -1
 }
 
 function validPoints(points) {
   for (var i = 0; i < points.length; i++) {
     let p = points[i]
-    if (p[0] > 1.0 || p[0] < 0.0 || p[1] > 1.0 || p[1] < 0.0) return false
+    if (
+      p[0] > SCREEN_RESOLUTION ||
+      p[0] < -SCREEN_RESOLUTION ||
+      p[1] > SCREEN_RESOLUTION ||
+      p[1] < -SCREEN_RESOLUTION)
+      return false
   }
   return true
 }
@@ -125,7 +140,7 @@ function validColor(color) {
   let colors = ['RED', 'GREEN', 'BLUE']
   for (var i = 0; i < 3; i++) {
     let c = colors[i]
-    if (!color[c] || color[c] < 0.0 || color > 1.0) return false
+    if (color[c] === undefined || color[c] < 0.0 || color > 1.0) return false
   }
   return true
 }

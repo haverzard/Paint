@@ -16,11 +16,10 @@ class EntityBank {
         entities.forEach((ent) => {
           if (!validColor(ent.color)) throw Error("Bad color")
           if (!validPoints(ent.vertices)) throw Error("Bad points")
-          console.log(convertToVertices(ent.vertices))
           new_entities.push(new Entity(
             ent.offset,
             convertToVertices(ent.vertices),
-            convertToGLMODE(ent.type),
+            convertStrToShape(ent.shape),
             [ent.color["RED"], ent.color["GREEN"], ent.color["BLUE"]],
           ))
         })
@@ -39,7 +38,7 @@ class EntityBank {
     this.entities.forEach((e) => {
       data["entities"].push({
         "offset": e.offset,
-        "type": convertToShape(e.gl_mode),
+        "shape": convertShapeToStr(e.shape),
         "color": {
           "RED": e.color[0],
           "GREEN": e.color[1],

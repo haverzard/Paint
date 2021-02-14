@@ -4,10 +4,10 @@ class Observer {
     this.shadow = new ShadowView(this)
   }
 
-  putDrawing(buf, gl_mode, color) {
+  putDrawing(buf, shape, color) {
     // insert entity to bank
     this.main.bank.addEntity(
-      new Entity(this.main.getVertices().length / 2, buf, gl_mode, color),
+      new Entity(this.main.getVertices().length / 2, buf, shape, color),
     )
     console.log(this.main.bank.entities)
     // redraw
@@ -45,8 +45,7 @@ class Observer {
         if (isClose(coord, entities[i].vertices.slice(v * 2, v * 2 + 2))) {
           this.clearShadow()
           this.shadow.unbindCursor()
-          this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [
-            1,
+          this.shadow.draw(entities[i].shape, entities[i].vertices, [
             1,
             1,
             1,
@@ -55,19 +54,12 @@ class Observer {
           return
         }
       }
-      if (entities[i].gl_mode != this.main.gl.LINES) {
+      // square is polygon, so we can think them as one
+      if (entities[i].shape == SHAPE.SQUARE || entities[i].shape == SHAPE.POLYGON) {
         var total_vertices = entities[i].vertices
-        if (entities[i].gl_mode == this.main.gl.TRIANGLE_STRIP) {
-          // special case polygon: square
-          total_vertices = entities[i].vertices
-            .slice(0, 4)
-            .concat(entities[i].vertices.slice(6, 8))
-            .concat(entities[i].vertices.slice(4, 6))
-        }
         if (isVInside(total_vertices, coord)) {
           //Activate Hover color by lowering opacity
-          this.shadow.draw(entities[i].gl_mode, entities[i].vertices, [
-            1,
+          this.shadow.draw(entities[i].shape, entities[i].vertices, [
             1,
             1,
             1,
@@ -77,7 +69,7 @@ class Observer {
         } else if (
           this.shadow.binding.length &&
           entities[i] == this.shadow.binding[0]
-        ) {
+        ) { // clear selection
           this.clearShadow()
           this.shadow.unbindCursor()
         }
@@ -94,7 +86,6 @@ class Observer {
 
   changeEntityColor(entity, color) {
     const entities = this.main.bank.entities
-    console.log('a')
     for (var i = entities.length - 1; i >= 0; i--) {
       if (JSON.stringify(entities[i]) === JSON.stringify(entity)) {
         entities[i].color = [...color]

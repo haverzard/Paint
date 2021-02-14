@@ -68,7 +68,7 @@ class MainView {
 
     // Draw the triangle
     this.bank.entities.forEach((entity) => {
-      gl.drawArrays(entity.gl_mode, entity.offset, entity.vertices.length / 2)
+      gl.drawArrays(convertToGLMODE(entity.shape), entity.offset, entity.vertices.length / 2)
     })
   }
 
