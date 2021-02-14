@@ -20,17 +20,12 @@ function saveModel() {
   observer.main.bank.saveToFile()
 }
 
-function switchMode(new_mode) {
-  mode = new_mode
-  var btnContainer = document.getElementById("myDIV");
-  var btns = btnContainer.getElementsByClassName('btn')
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener('click', function () {
-      var current = document.getElementsByClassName('active')
-      current[0].className = current[0].className.replace(' active', '')
-      this.className += ' active'
-    })
-  }
+function switchMode(newMode) {
+  var btnContainer = document.getElementById("myDIV")
+  var btns = btnContainer.getElementsByClassName("btn")
+  btns[mode].classList.toggle("active")
+  btns[newMode].classList.toggle("active")
+  mode = newMode
   observer.clearShadow()
 }
 
