@@ -1,29 +1,51 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
 body {
-  margin: 0 !important;
-  padding: 0 !important;
-  background-color: black;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #919191;
+}
+
+#paint-app {
+    display: flex;
+    padding: 10px;
+    gap: 2rem;
+    height: 98vh;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+#workspace {
+    position: relative;
+    width: 100vh;
 }
 
 #canvas-background {
-  background-color: white;
+    background-color: white;
 }
 
 #canvas-background,
 #main-view,
 #shadow-view {
-  position: absolute;
+    position: absolute;
 }
 
+
 .btn {
-  border: none;
-  outline: none;
-  padding: 3px 3px;
-  background-color: #f1f1f1;
-  cursor: pointer;
+    border: none;
+    border-radius: 5px 5px 0 0;
+    outline: none;
+    padding: 3px 3px;
+    background-color: #666;
+    color: white;
+    cursor: pointer;
 }
 
 .active,
 .btn:hover {
-  background-color: #666;
-  color: white;
+    background-color: white;
+    color: black;
 }

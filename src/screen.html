@@ -3,6 +3,7 @@
   <head>
     <title>Paint WebGL</title>
     <link href="screen.css" rel="stylesheet" />
+    <link href="help.css" rel="stylesheet" />
     <script src="observer.js"></script>
     <script src="util.js"></script>
     <script src="shaders/norm2d_vertex.js"></script>
@@ -15,32 +16,112 @@
     <script src=""></script>
   </head>
   <body>
-    <div id="myDIV">
-      <button onclick="switchMode(MODE.CURSOR);" class="btn active">
-        Cursor
-      </button>
-      <button onclick="switchMode(MODE.LINE);" class="btn">
-        Line
-      </button>
-      <button onclick="switchMode(MODE.SQUARE);" class="btn">
-        Square
-      </button>
-      <button onclick="switchMode(MODE.POLYGON);" class="btn">
-        Polygon
-      </button>
-      <button id="edit-toggle-btn" onclick="toggleEditMode();">
-        Resize Mode
-      </button>
-      <button onclick="clearBank()">Clear</button>
-      <input type="color" id="color-picker" value="#000000" />
-      <button onclick="saveModel()">Save</button>
-      <input type="file" id="file-uploader" />
+      <div id="paint-app">
+          <section id="workspace">
+              
+            <div id="myDIV">
+                <button onclick="switchMode(MODE.CURSOR);" class="btn active">
+                    Cursor
+                </button>
+                <button onclick="switchMode(MODE.LINE);" class="btn">
+                    Line
+                </button>
+                <button onclick="switchMode(MODE.SQUARE);" class="btn">
+                    Square
+                </button>
+                <button onclick="switchMode(MODE.POLYGON);" class="btn">
+                    Polygon
+                </button>
+                <button id="edit-toggle-btn" onclick="toggleEditMode();">
+                    Resize Mode
+                </button>
+                <button onclick="clearBank()">Clear</button>
+                <input type="color" id="color-picker" value="#000000" />
+                <button onclick="saveModel()">Save</button>
+                <input type="file" id="file-uploader" />
+                </div>
+            <div>
+                <div id="canvas-background"></div>
+                <canvas id="main-view" width="800" height="500"></canvas>
+                <canvas id="shadow-view" width="800" height="500"></canvas>
+            </div>
+        </section>
+        <section id="help">
+            <h1 class="help-title">
+                Bantuan
+            </h1>
+            <div class="help-container">
+                <h1>2D Web Based CAD</h1>
+                <p>Aplikasi web ini merupakan Computer Aid Design (CAD) berbasis WebGL. Berikut adalah fitur-fitur yang disediakan oleh website.</p>
+                <h2>Cursor</h2>
+                <p>Dengan Cursor, Anda memiliki 2 mode:</p>
+                <h3>Recolor Mode</h3>
+                <p>Bangun yang ada di canvas dapat diwarnai ulang dalam recolor mode.</p>
+                <ol>
+                    <li>Pilih warna dari tombol Color </li>
+                    <li>Klik bangun yang ingin diubah warnanya</li>
+                </ol>
+                <h3>Resize Mode</h3>
+                <p>Gambar yang ada di canvas dapat diubah ukurannya ulang dalam recolor mode.</p>
+                <ol>
+                    <li>Pilih warna dari tombol Color </li>
+                    <li>Tentukan bangun yang ingin diubah ukurannya</li>
+                    <li>Klik dan tahan salah satu titik dari bangun</li>
+                    <li>Tarik titik sudut bangun, kemudian lepaskan untuk mengubah ukurannya</li>
+                </ol>
+                <hr/>
+                <h2>Line</h2>
+                <p>Dengan Line, Anda dapat membuat sebuah garis.</p>
+                <ol>
+                    <li>Pilih tab 'Line'</li>
+                    <li>Pilih warna dari tombol Color</li>
+                    <li>Klik di kanvas untuk menentukan titik awal garis</li>
+                    <li>Klik lagi di kanvas untuk menentukan titik akhir garis</li>
+                    <li>Tekan escape selama menentukan titik kedua untuk membatalkan penggambaran</li>
+                </ol>
+                <hr/>
+                <h2>Square</h2>
+                <p>Dengan Square, Anda dapat membuat sebuah persegi.</p>
+                <ol>
+                    <li>Pilih tab 'Square'</li>
+                    <li>Pilih warna dari tombol Color</li>
+                    <li>Klik di kanvas untuk menentukan sudut awal persegi</li>
+                    <li>Klik lagi di kanvas untuk menentukan titik sudut persegi yang berlawanan</li>
+                    <li>Tekan escape selama menentukan titik kedua untuk membatalkan penggambaran</li>
+                </ol>
+                <hr/>
+                <h2>Polygon</h2>
+                <p>Dengan Polygon, Anda dapat membuat sebuah poligon dengan jumlah sisi banyak.
+                    Jumlah sisi tergantung dari berapa kali Anda menentukan titiknya.</p>
+                <ol>
+                    <li>Pilih tab 'Polygon'</li>
+                    <li>Pilih warna dari tombol Color</li>
+                    <li>Klik di kanvas untuk menentukan titik awal poligon</li>
+                    <li>Klik lagi di kanvas untuk menentukan titik selanjutnya</li>
+                    <li>Titik dari poligon tidak terbatas dan dapat dibuat sebanyak mungkin</li>
+                    <li>Untuk mengakhiri gambar, klik titik awal dari poligon</li>
+                    <li>Tekan escape selama menentukan titik kedua untuk membatalkan penggambaran</li>
+                </ol>
+                <hr/>
+                <h2>Eyedropper</h2>
+                <p>Gunakan tombol Eyedropper untuk menyalin warna yang terdapat di layar untuk menentukan warna
+                    dari bangun yang akan digambar.</p>
+                <hr/>
+                <h2>Color</h2>
+                <p>Gunakan tombol Color untuk memilih warna untuk menentukan warna
+                    dari bangun yang akan digambar.</p>
+                <hr/>
+                <h2>Clear</h2>
+                <p>Gunakan tombol Clear untuk menghapus semua bangun yang digambarkan di kanvas.</p>
+                <hr/>
+                <h2>Save</h2>
+                <p>Gunakan tombol Save untuk menyimpan hasil gambar ke dalam sebuah file json.</p>
+                <hr/>
+                <h2>Browse</h2>
+                <p>Gunakan tombol Browse untuk membuat file json yang pernah disimpan sebelumnya</p>
+            </div>
+        </section>
     </div>
-    <div>
-      <div id="canvas-background"></div>
-      <canvas id="main-view" width="800" height="500"></canvas>
-      <canvas id="shadow-view" width="800" height="500"></canvas>
-    </div>
-    <script src="gl.js"></script>
-  </body>
+        <script src="gl.js"></script>
+</body>
 </html>
