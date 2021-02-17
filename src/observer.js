@@ -7,7 +7,7 @@ class Observer {
   putDrawing(buf, shape, color) {
     // insert entity to bank
     this.main.bank.addEntity(
-      new Entity(this.main.getVertices().length / 2, buf, shape, color),
+      new Entity(buf, shape, color),
     )
     console.log(this.main.bank.entities)
     // redraw
