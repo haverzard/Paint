@@ -21,10 +21,10 @@ function saveModel() {
 }
 
 function switchMode(newMode) {
-  var btnContainer = document.getElementById("myDIV")
-  var btns = btnContainer.getElementsByClassName("btn")
-  btns[mode].classList.toggle("active")
-  btns[newMode].classList.toggle("active")
+  var btnContainer = document.getElementById('myDIV')
+  var btns = btnContainer.getElementsByClassName('btn')
+  btns[mode].classList.toggle('active')
+  btns[newMode].classList.toggle('active')
   mode = newMode
   observer.clearShadow()
 }
@@ -98,16 +98,16 @@ function convertToVertices(points) {
 }
 
 function convertShapeToStr(shape) {
-  if (shape == SHAPE.LINE) return "line"
-  else if (shape == SHAPE.SQUARE) return "square"
-  else if (shape == SHAPE.POLYGON) return "polygon"
+  if (shape == SHAPE.LINE) return 'line'
+  else if (shape == SHAPE.SQUARE) return 'square'
+  else if (shape == SHAPE.POLYGON) return 'polygon'
   else return -1
 }
 
 function convertStrToShape(shape) {
-  if (shape == "line") return SHAPE.LINE
-  else if (shape == "square") return SHAPE.POLYGON
-  else if (shape == "polygon") return SHAPE.POLYGON
+  if (shape == 'line') return SHAPE.LINE
+  else if (shape == 'square') return SHAPE.POLYGON
+  else if (shape == 'polygon') return SHAPE.POLYGON
   else return -1
 }
 
@@ -125,7 +125,8 @@ function validPoints(points) {
       p[0] > SCREEN_RESOLUTION ||
       p[0] < -SCREEN_RESOLUTION ||
       p[1] > SCREEN_RESOLUTION ||
-      p[1] < -SCREEN_RESOLUTION)
+      p[1] < -SCREEN_RESOLUTION
+    )
       return false
   }
   return true
@@ -227,6 +228,13 @@ function isVInside(vertices, p) {
     }
   }
   return count % 2 == 1
+}
+
+function toggleHelpMenu() {
+  const helpMenu = document.getElementById('help')
+  if (helpMenu) {
+    helpMenu.classList.toggle('hide-menu')
+  }
 }
 
 const equals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i])
