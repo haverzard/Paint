@@ -9,37 +9,29 @@ body {
   background-color: #919191;
 }
 
-/* #paint-app {
+#paint-app {
   display: flex;
   padding: 10px;
   gap: 2rem;
   height: 98vh;
   flex-direction: row;
   align-items: stretch;
-} */
-/* 
+}
+
 #workspace {
   position: relative;
   width: 100vh;
-} */
+}
 
 #help-btn {
   position: absolute;
-  top: 8px;
+  top: 17px;
   right: 10px;
-}
-
-#paint-app {
-  display: flex;
-  padding: 10px;
-  gap: 2rem;
-  align-items: stretch;
 }
 
 #help {
   padding-top: 28px;
   height: 907.5px;
-  overflow-y: scroll;
 }
 
 .hide-menu {
@@ -50,7 +42,7 @@ body {
   background-color: white;
 }
 
-/* #canvas-background, */
+#canvas-background,
 #main-view,
 #shadow-view {
   position: absolute;
