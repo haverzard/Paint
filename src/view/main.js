@@ -2,8 +2,8 @@ class MainView {
   constructor() {
     // init canvas
     this.canvas = document.getElementById('main-view')
-    this.canvas.width = window.innerHeight * 0.95
-    this.canvas.height = window.innerHeight * 0.95
+    this.canvas.width = window.innerWidth * 0.90
+    this.canvas.height = window.innerHeight * 0.90
 
     // attributes
     this.bank = new EntityBank()

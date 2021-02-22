@@ -2,8 +2,8 @@ class ShadowView {
   constructor(observer) {
     // init canvas
     this.canvas = document.getElementById('shadow-view')
-    this.canvas.width = window.innerHeight * 0.95
-    this.canvas.height = window.innerHeight * 0.95
+    this.canvas.width = window.innerWidth * 0.90
+    this.canvas.height = window.innerHeight * 0.90
     this.canvas.addEventListener('mousedown', (e) => this.processMousePress(e))
     this.canvas.addEventListener('mouseup', (e) => this.processMouseRelease(e))
     this.canvas.addEventListener('mousemove', (e) => this.processMouseMove(e))

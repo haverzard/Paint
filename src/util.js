@@ -1,4 +1,5 @@
 const SCREEN_RESOLUTION = 5
+const ASPECT_RATIO = window.innerWidth/window.innerHeight
 const MODE = Object.freeze({ CURSOR: 0, LINE: 1, SQUARE: 2, POLYGON: 3 })
 const SHAPE = Object.freeze({ LINE: 1, SQUARE: 2, POLYGON: 3 })
 const EDITMODE = Object.freeze({ RESIZE: 0, RECOLOR: 1 })
@@ -59,16 +60,16 @@ function createSquare(p1, p2) {
   // make sure it's within the canvas
   var d = Math.max(
     Math.min(
-      Math.abs(SCREEN_RESOLUTION - p2[1] - SCREEN_RESOLUTION * 2 * neg[1]),
+      Math.abs(SCREEN_RESOLUTION - p2[1] - SCREEN_RESOLUTION * 2 * neg[1]) / ASPECT_RATIO,
       Math.abs(p1[0] - p2[0]),
     ),
     Math.min(
       Math.abs(SCREEN_RESOLUTION - p2[0] - SCREEN_RESOLUTION * 2 * neg[0]),
-      Math.abs(p1[1] - p2[1]),
+      Math.abs(p1[1] - p2[1]) / ASPECT_RATIO,
     ),
   )
   // calculate vertex
-  var temp_buf = [p2[0] + d * (1 - neg[0] * 2), p2[1] + d * (1 - neg[1] * 2)]
+  var temp_buf = [p2[0] + d * (1 - neg[0] * 2), p2[1] + d * (1 - neg[1] * 2) * ASPECT_RATIO]
   return [
     p2[0],
     p2[1],

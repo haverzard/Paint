@@ -36,8 +36,8 @@ function loadShader(gl, vertCoder, fragCoder) {
 
 window.onload = () => {
   var canvasBg = document.getElementById('canvas-background')
-  canvasBg.style.minWidth = window.innerHeight * 0.95 + 'px'
-  canvasBg.style.minHeight = window.innerHeight * 0.95 + 'px'
+  canvasBg.style.minWidth = window.innerWidth * 0.90 + 'px'
+  canvasBg.style.minHeight = window.innerHeight * 0.90 + 'px'
 
   observer = new Observer()
 
