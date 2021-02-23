@@ -152,7 +152,7 @@ class ShadowView {
       total_vertices = createSquare(coord, buf)
     } else if (mode == MODE.POLYGON) {
       shape = SHAPE.POLYGON
-      if (buf.length <= 4) {
+      if (buf.length < 4) {
         shape = SHAPE.LINE
       }
       total_vertices = total_vertices.concat(coord)
