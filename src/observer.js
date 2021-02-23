@@ -38,42 +38,33 @@ class Observer {
         ]
     }
 
-    getMask(color) {
-        var r = color[0]
-        var g = color[1]
-        var b = color[2]
-        var luminance = (r + r + b + g + g + g) / 6
-        return luminance > 0.5 ? 0 : 1
-    }
-
     findV(coord) {
         var entities = this.main.bank.entities
         for (var i = entities.length - 1; i >= 0; i--) {
             for (var v = 0; v < entities[i].vertices.length / 2; v++) {
                 if (isClose(coord, entities[i].vertices.slice(v * 2, v * 2 + 2))) {
-                    document.getElementById('shadow-view').style.opacity = "50%"
                     this.clearShadow()
                     this.shadow.unbindCursor()
+                    var maskColor = mask(entities[i].color)
                     this.shadow.draw(entities[i].shape, entities[i].vertices, [
-                        1,
-                        1,
-                        1,
+                        maskColor[0],
+                        maskColor[1],
+                        maskColor[2]
                     ])
                     this.shadow.bindCursor(entities[i], v)
                     return
-                } else {
-                    document.getElementById('shadow-view').style.opacity = "100%"
                 }
             }
             // square is polygon, so we can think them as one
             if (entities[i].shape == SHAPE.SQUARE || entities[i].shape == SHAPE.POLYGON) {
                 var total_vertices = entities[i].vertices
                 if (isVInside(total_vertices, coord)) {
-                    // Activate Hover color by adding mask in shadow view and lowering shadow-view opacity
-                    document.getElementById('shadow-view').style.opacity = "50%"
-                    var mask = this.getMask(entities[i].color)
+                    // Activate Hover color by adding mask in shadow view
+                    var maskColor = mask(entities[i].color)
                     this.shadow.draw(entities[i].shape, entities[i].vertices, [
-                        mask, mask, mask
+                        maskColor[0],
+                        maskColor[1],
+                        maskColor[2]
                     ])
                     this.shadow.bindCursor(entities[i], -1)
                     return
@@ -83,8 +74,6 @@ class Observer {
                 ) { // clear selection
                     this.clearShadow()
                     this.shadow.unbindCursor()
-                } else {
-                    document.getElementById('shadow-view').style.opacity = "100%"
                 }
             }
         }
