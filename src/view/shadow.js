@@ -212,7 +212,9 @@ class ShadowView {
                 .concat(coord)
                 .concat(entity.vertices.slice(s))
         }
-        this.draw(entity.shape, total_vertices, entity.color)
+        if (this.observer.main.editMode == EDITMODE.RESIZE && mode == MODE.CURSOR) {
+            this.draw(entity.shape, total_vertices, entity.color)
+        }
     }
 
     bindCursor(entity, v_num) {
