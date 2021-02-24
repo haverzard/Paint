@@ -11,7 +11,7 @@ In order to open the program, you will need a browser that is compatible with We
 Open `src/screen.html` in your browser. You should be greeted with a blank canvas.
 
 ## User Manual
-Please refer to the pdf file in the `docs` folder to see the user manual
+Please refer to the pdf file in the `docs` folder or the help section in the program to see the user manual.
 
 ## Contributors
 NIM | Nama 
