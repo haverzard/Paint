@@ -23,7 +23,6 @@ class EntityBank {
           ))
         })
         this.entities = new_entities
-        console.log(this.entities)
         callback()
       })
       reader.readAsText(file)

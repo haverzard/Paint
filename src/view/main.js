@@ -48,7 +48,6 @@ class MainView {
     var shaderProgram = this.shaderProgram
 
     var vertices_info = this.getVerticesInfo()
-    // console.log(vertices_info)
 
     // create buffer for vertex, color, & depth - for shaders
     var vertex_buffer = createBuffer(gl, vertices_info[0])

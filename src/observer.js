@@ -9,7 +9,6 @@ class Observer {
         this.main.bank.addEntity(
             new Entity(buf, shape, color),
         )
-        // console.log(this.main.bank.entities)
         // redraw
         this.main.draw()
     }
@@ -99,6 +98,5 @@ class Observer {
 
     changeEditMode() {
         this.main.editMode = (this.main.editMode + 1) % 2
-        // console.log(this.main.editMode)
     }
 }

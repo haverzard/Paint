@@ -44,6 +44,7 @@ window.onload = () => {
   var fileUploader = document.getElementById('file-uploader')
   fileUploader.onchange = (e) => {
     observer.loadModel(e.target.files[0])
+    fileUploader.value = ""
   }
 }
 
