@@ -107,7 +107,7 @@ function convertShapeToStr(shape) {
 
 function convertStrToShape(shape) {
     if (shape == 'line') return SHAPE.LINE
-    else if (shape == 'square') return SHAPE.POLYGON
+    else if (shape == 'square') return SHAPE.SQUARE
     else if (shape == 'polygon') return SHAPE.POLYGON
     else return -1
 }
